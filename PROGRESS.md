@@ -686,6 +686,38 @@ shapedividers.com-ის SVG ტალღა მოითხოვა — გრ
   გაზომვამ ორივემ ვერ დაიჭირა.
 - `npm run build` ✅ და `astro check` ✅ — 0 error.
 
+### 2026-08-19-ის სესია, ნაწილი 14 — გასუფთავება და GitHub
+
+პროექტი გაიწმინდა და აიტვირთა: <https://github.com/dataaqu/ParkView>
+(`main`, ერთი commit `1e1ad15`, 91 ფაილი, 4.2 MB).
+
+**წაშლილია (დისკიდანაც):**
+- `preview-*.png` / `preview-loader.gif` — ძველი სამუშაო სქრინშოტები (2.7 MB).
+- `public/images/`: `Park View Fasad.jpg.jpeg`, `favicon.png` (დუბლიკატი —
+  ნამდვილი `public/favicon.png`-ია), `logo.png`, `suite.jpg` (Master suite-ის
+  სექციასთან ერთად გახდა ზედმეტი).
+- ⚠️ **`src/components/ContactForm.astro` + `src/pages/api/contact.ts` +
+  `.env.example`** — ფორმა კონტაქტის გვერდიდან უკვე მოხსნილი იყო, ანუ
+  endpoint-ს აღარაფერი იძახებდა. **ამით საიტი სრულად სტატიკური გახდა** —
+  build აღარ აწყობს Vercel serverless ფუნქციას. `astro.config.mjs`-ის
+  კომენტარი შესაბამისად განახლდა. თუ ფორმა დაბრუნდება, ორივე ფაილი
+  ხელახლა დასაწერია (Resend-ის ინტეგრაცია იყო).
+- კონტენტი JSON-ებში **არ შემხებია**: `contact.form.*`, `contact.intro`,
+  `home.suite`, `home.location` სამივე ენაზე დევს, უბრალოდ აღარ იკითხება.
+
+**რეპოზიტორიიდან გამორიცხულია (დისკზე რჩება, `.gitignore`-შია):**
+- `docs/` — კლიენტის შენიშვნები და სკრინშოტები (3.8 MB). არ ვტვირთავთ:
+  კლიენტის მასალაა და საიტის აწყობას არ სჭირდება.
+- `public/images/saboloo *.webp` — ორიგინალი 3840px რენდერები (~5 MB).
+  `npm run images`-ს სჭირდება, საიტს — არა (ყველა წარმოებული ფაილი
+  committed-ია). თუ დერივატივების თავიდან გენერაცია დასჭირდა, რენდერები
+  `public/images/`-ში უნდა დაბრუნდეს.
+
+**დაემატა `README.md`** — stack, ენების სქემა, `npm` სკრიპტები, ფოლდერების
+რუკა და სურათების pipeline-ის ახსნა.
+
+⚠️ **commit-ის ავტორობა:** `dataaqu <bspacege@gmail.com>`. Co-author არ დაემატა.
+
 ## 5. რა დარჩა 🔜
 
 1. **ბრაუზერში ვიზუალური შემოწმება.** კოდი აეწყო და HTML შემოწმებულია,
