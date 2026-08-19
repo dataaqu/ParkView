@@ -1,0 +1,59 @@
+---
+import { ADDRESS, MAP, MAP_HREF, SITE } from '../config/site';
+import type { Locale } from '../i18n/config';
+
+interface Props {
+  locale: Locale;
+  class?: string;
+}
+
+const { locale, class: className = '' } = Astro.props;
+
+const label: Record<Locale, string> = {
+  ka: 'რუკა — PARK VIEW-ის ლოკაცია',
+  en: 'Map — PARK VIEW location',
+  ru: 'Карта — расположение PARK VIEW',
+};
+
+const openLabel: Record<Locale, string> = {
+  ka: 'გახსენით Google Maps-ში',
+  en: 'Open in Google Maps',
+  ru: 'Открыть в Google Maps',
+};
+
+/* Keyless embed — no API key to leak or expire. The pin sits on the
+   coordinates in `config/site.ts`, which replace the wrong location the
+   client flagged on the old site. The old embed also rendered as a black
+   tile before it loaded; the light frame below is what shows instead. */
+const embedSrc = `https://www.google.com/maps?q=${MAP.lat},${MAP.lng}&z=${MAP.zoom}&hl=${locale}&output=embed`;
+const directionsHref = MAP_HREF;
+---
+
+<figure class:list={['group relative overflow-hidden border border-line bg-surface-3', className]}>
+  <iframe
+    src={embedSrc}
+    title={label[locale]}
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    class="block h-[22rem] w-full border-0 lg:h-[34rem]"
+    style="filter: grayscale(0.35) contrast(1.02)"></iframe>
+
+  <figcaption
+    class="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-surface px-6 py-4 text-sm"
+  >
+    <span class="text-muted">{ADDRESS[locale]}</span>
+
+    <a
+      href={directionsHref}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-2 text-[0.78rem] font-medium tracking-[0.12em] text-gold-600 transition-colors duration-300 hover:text-gold-700"
+    >
+      {openLabel[locale]}
+      <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+        <path d="M4 2h6v6M10 2 2.5 9.5" />
+      </svg>
+      <span class="sr-only">— {SITE.name}</span>
+    </a>
+  </figcaption>
+</figure>

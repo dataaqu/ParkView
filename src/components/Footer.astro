@@ -1,0 +1,107 @@
+---
+import Logo from './Logo.astro';
+import SocialLinks from './SocialLinks.astro';
+import { t } from '../content';
+import { ADDRESS, SITE } from '../config/site';
+import { ROUTES, type Locale, type RouteKey } from '../i18n/config';
+import { localizedPath } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = t(locale);
+const year = new Date().getFullYear();
+
+/* Same trick the About statement uses on the developer's name: split the
+   credit on the studio's name so the three content files keep holding one
+   plain string, with no markup for a translator to break. */
+const [creditBefore, creditAfter = ''] = copy.footer.credit.split(SITE.credit);
+
+const links = (Object.keys(ROUTES) as RouteKey[]).map((key) => ({
+  label: copy.nav[key],
+  href: localizedPath(locale, key),
+}));
+---
+
+<footer>
+  <div class="container-page py-16 lg:py-20">
+    <div class="grid gap-12 lg:grid-cols-[1.2fr_1fr_1fr]">
+      <div>
+        <Logo variant="light" />
+        <p class="mt-5 max-w-xs text-sm leading-relaxed text-white/60">
+          {copy.home.meta.description}
+        </p>
+      </div>
+
+      <div>
+        <h2 class="eyebrow text-gold-300">{copy.footer.navTitle}</h2>
+        {/* `py-1.5` rather than a bare line box: on a phone these were 17px
+            tall with 10px between them, which is a 27px pitch to hit with a
+            thumb. The padding takes each row to 29px without moving the
+            column, since the list gap shrinks by the same amount. */}
+        <ul class="mt-4 space-y-1">
+          {
+            links.map(({ label, href }) => (
+              <li>
+                <a
+                  href={href}
+                  class="inline-block py-1.5 text-sm text-white/75 transition-colors duration-300 hover:text-gold-300"
+                >
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="eyebrow text-gold-300">{copy.footer.contactTitle}</h2>
+        <ul class="mt-4 space-y-1 text-sm text-white/75">
+          <li>
+            <a
+              href={`tel:${SITE.phoneHref}`}
+              class="inline-block py-1.5 transition-colors duration-300 hover:text-gold-300"
+            >
+              {SITE.phone}
+            </a>
+          </li>
+          <li>
+            <a
+              href={`mailto:${SITE.email}`}
+              class="inline-block py-1.5 transition-colors duration-300 hover:text-gold-300"
+            >
+              {SITE.email}
+            </a>
+          </li>
+          <li class="pt-1.5 text-white/55">{ADDRESS[locale]}</li>
+        </ul>
+
+        {/* Under the phone and the address rather than off in the corner:
+            everything in this column is a way to reach the company. */}
+        <SocialLinks class="mt-6" size="sm" tone="dark" reveal={false} />
+      </div>
+    </div>
+
+    <div
+      class="mt-14 flex flex-col gap-3 border-t border-white/12 pt-7 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {year} {SITE.name}. {copy.footer.rights}</p>
+      {/* gold-400, not the gold-700 this line carried on the old warm ground:
+          against the closing band it is the dark end of the scale that
+          disappears. The 900 face is the subset declared in global.css —
+          five letters, 1.4 KB. */}
+      <p>
+        {creditBefore}<a
+          href={SITE.creditHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-black text-gold-400 transition-colors duration-300 hover:text-gold-300"
+          >{SITE.credit}</a
+        >{creditAfter}
+      </p>
+    </div>
+  </div>
+</footer>

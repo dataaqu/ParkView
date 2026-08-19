@@ -1,0 +1,87 @@
+---
+import Icon, { type IconName } from '../Icon.astro';
+
+interface Item {
+  icon: string;
+  title: string;
+  body: string;
+  /** Path without the width suffix, e.g. `/images/infra-gate`. */
+  image: string;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items }: Props = Astro.props;
+---
+
+{/* The three pillars are the whole of what the client wrote about this
+    building's infrastructure, so on this page they get the room the homepage
+    grid cannot give them: one full band each, an elevation at plate size, and
+    a heading at section scale. The homepage keeps the compact three-up
+    version — same sentences, a summary rather than the subject. */}
+<section class="bg-surface py-section-sm lg:py-section">
+  <div class="container-page">
+    <ul class="space-y-24 lg:space-y-36">
+      {
+        items.map((item, i) => (
+          <li class="grid items-center gap-10 lg:grid-cols-12 lg:gap-16 xl:gap-20">
+            {/* Alternating sides. The order swap is desktop-only: stacked on a
+                phone the image always leads, or the rhythm reads as an error. */}
+            <div class:list={['lg:col-span-7', i % 2 === 1 && 'lg:order-2']}>
+              <div class="relative aspect-4/3 overflow-hidden border border-line bg-surface-2">
+                {/* alt is empty on purpose. All three renders are the same
+                    facade from three angles — none of them pictures the lift
+                    or the garage — so the heading and body beside each one
+                    already carry everything a screen reader needs, and a
+                    caption naming a feature the image does not show would
+                    describe the page rather than the picture. */}
+                <img
+                  src={`${item.image}-1400.webp`}
+                  srcset={`${item.image}-800.webp 800w, ${item.image}-1400.webp 1400w`}
+                  sizes="(min-width: 1024px) 58vw, 100vw"
+                  alt=""
+                  width="1400"
+                  height="1050"
+                  loading="lazy"
+                  decoding="async"
+                  class="absolute inset-0 h-[112%] w-full object-cover"
+                  data-parallax="-0.06"
+                />
+              </div>
+            </div>
+
+            <div class:list={['lg:col-span-5', i % 2 === 1 && 'lg:order-1']}>
+              {/* Ordinal, rule and mark on one line — the numeral orders the
+                  three bands without a heading having to say "one of three". */}
+              <div class="flex items-center gap-5" data-reveal>
+                <span class="font-display text-[2.25rem] leading-none text-gold-300 lg:text-[3rem]">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+
+                <span class="h-px flex-1 bg-line" aria-hidden="true" />
+
+                <Icon name={item.icon as IconName} class="h-9 w-9 shrink-0 text-gold-500 lg:h-10 lg:w-10" />
+              </div>
+
+              <h2
+                class="mt-8 text-3xl text-balance text-ink lg:text-4xl xl:text-[2.6rem]"
+                data-split
+                style="opacity:0"
+              >
+                {item.title}
+              </h2>
+
+              <span class="mt-7 block h-px w-16 bg-gold-500" data-reveal data-reveal-delay="0.15" aria-hidden="true" />
+
+              <p class="mt-8 text-lg leading-[1.85] text-ink-soft" data-reveal data-reveal-delay="0.22">
+                {item.body}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

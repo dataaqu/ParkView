@@ -1,0 +1,30 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  align?: 'left' | 'center';
+  /** Heading level; sections use h2, the page hero uses h1. */
+  as?: 'h1' | 'h2';
+  class?: string;
+}
+
+const { eyebrow, title, align = 'left', as: Tag = 'h2', class: className = '' }: Props = Astro.props;
+---
+
+<div class:list={['relative', align === 'center' && 'text-center', className]}>
+  <div class="relative">
+    {eyebrow && <p class="eyebrow" data-reveal>{eyebrow}</p>}
+
+    {/* No base `text-*`: `.display-title` in global.css sizes this up to the
+        `lg` breakpoint. See the comment there. */}
+    <Tag class="display-title mt-4 text-balance text-ink lg:text-5xl xl:text-[3.5rem]" data-split style="opacity:0">
+      {title}
+    </Tag>
+
+    <span
+      class:list={['mt-7 block h-px w-16 bg-gold-500', align === 'center' && 'mx-auto']}
+      data-reveal
+      data-reveal-delay="0.15"
+      aria-hidden="true"></span>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+---
+import PageHero from '../sections/PageHero.astro';
+import StatementSection from '../sections/StatementSection.astro';
+import WhyGrid from '../sections/WhyGrid.astro';
+import DistrictSection from '../sections/DistrictSection.astro';
+import PlanSection from '../sections/PlanSection.astro';
+import { t } from '../../content';
+import type { Locale } from '../../i18n/config';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale }: Props = Astro.props;
+const copy = t(locale);
+const about = copy.about;
+---
+
+<PageHero eyebrow={about.intro.eyebrow} title={copy.nav.about} image="/images/hero1-1920.webp" />
+
+{/* The statement. The homepage carries only its opening paragraph and links
+    here, so a visitor arriving from there reads on rather than reads again. */}
+<StatementSection
+  locale={locale}
+  eyebrow={about.intro.eyebrow}
+  title={about.intro.title}
+  body={about.intro.body}
+/>
+
+<WhyGrid
+  eyebrow={about.why.eyebrow}
+  title={about.why.title}
+  body={about.why.body}
+  features={about.why.features}
+  assurances={about.why.assurances}
+/>
+
+{/* The neighbourhood itself, on the dark ground — the only such band on the
+    page, which is what marks it as the turn in the argument. */}
+<DistrictSection
+  eyebrow={about.district.eyebrow}
+  title={about.district.title}
+  body={about.district.body}
+/>
+
+{/* The drawing closes the argument: everything argued above, in one section
+    through the building. The homepage carries the location list instead. */}
+<PlanSection
+  eyebrow={about.plan.eyebrow}
+  title={about.plan.title}
+  body={about.plan.body}
+  caption={about.plan.caption}
+/>

@@ -1,0 +1,39 @@
+# build output
+dist/
+.vercel/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment
+.env
+.env.production
+.env*.local
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Client material and raw renders. Both are kept on this machine but stay out
+# of the repository: `docs/` holds the client's own remark sheets and
+# screenshots, and the `saboloo *.webp` files are the untouched 3840px renders
+# out of their archive. Neither is needed to build or run the site — every
+# image the site links to is a derivative in `public/images/`, already
+# committed. To regenerate those derivatives you need the renders back in
+# `public/images/`; see the README.
+docs/
+public/images/saboloo*.webp
+
+# Local review captures
+preview-*.png
+preview-*.gif

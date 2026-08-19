@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import InfrastructureBody from '../components/pages/InfrastructureBody.astro';
+import { t } from '../content';
+
+const locale = 'ru' as const;
+const meta = t(locale).infrastructure.meta;
+---
+
+<BaseLayout locale={locale} title={meta.title} description={meta.description}>
+  <InfrastructureBody locale={locale} />
+</BaseLayout>

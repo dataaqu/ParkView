@@ -1,0 +1,80 @@
+---
+import { SITE } from '../../config/site';
+import type { Locale } from '../../i18n/config';
+
+interface Props {
+  locale: Locale;
+  eyebrow: string;
+  title: string;
+  body: string[];
+}
+
+const { eyebrow, title, body }: Props = Astro.props;
+
+/* The developer's name opens the statement in every language, so it is set
+   in gold rather than left as plain body text. Splitting on the name keeps
+   the copy a single string in the content files — no markup for a translator
+   to break, and nothing to re-sync if the wording changes. */
+const [lead, ...rest] = body;
+const leadParts = lead.split(SITE.company);
+---
+
+{/* Photograph left, statement right, both inside the page gutter so nothing
+    touches the viewport edge.
+
+    The image stays landscape (4:3): these renders are 16:9 elevations of a
+    wide building, and a portrait crop cuts the building in half — which is
+    what went wrong in the earlier version of this section. */}
+<section class="bg-surface py-section-sm lg:py-section">
+  <div class="container-page">
+    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+      <figure class="overflow-hidden">
+        <img
+          src="/images/about-primary-1400.webp"
+          srcset="/images/about-primary-800.webp 800w, /images/about-primary-1400.webp 1400w"
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          alt=""
+          width="1400"
+          height="1050"
+          loading="lazy"
+          decoding="async"
+          class="aspect-[4/3] w-full scale-[1.06] object-cover"
+          data-parallax="-0.05"
+        />
+      </figure>
+
+      <div class="lg:max-w-[34rem]">
+        <p class="eyebrow" data-reveal>{eyebrow}</p>
+
+        <h2
+          class="mt-4 text-4xl leading-[1.08] text-balance text-ink lg:text-5xl xl:text-[3.5rem]"
+          data-split
+          style="opacity:0"
+        >
+          {title}
+        </h2>
+
+        <span class="mt-8 block h-px w-16 bg-gold-500" data-reveal data-reveal-delay="0.15" aria-hidden="true"></span>
+
+        <p class="mt-9 text-lg leading-[1.7] text-ink lg:text-xl lg:leading-[1.65]" data-reveal data-reveal-delay="0.1">
+          {
+            leadParts.map((part, i) => (
+              <>
+                {i > 0 && <strong class="font-normal text-gold-600">{SITE.company}</strong>}
+                {part}
+              </>
+            ))
+          }
+        </p>
+
+        {
+          rest.map((paragraph, i) => (
+            <p class="mt-5 text-[0.98rem] leading-[1.85] text-muted" data-reveal data-reveal-delay={0.18 + i * 0.08}>
+              {paragraph}
+            </p>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

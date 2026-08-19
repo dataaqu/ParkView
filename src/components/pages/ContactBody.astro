@@ -1,0 +1,17 @@
+---
+import PageHero from '../sections/PageHero.astro';
+import ContactSection from '../sections/ContactSection.astro';
+import { t } from '../../content';
+import type { Locale } from '../../i18n/config';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const contact = t(locale).contact;
+---
+
+<PageHero eyebrow={contact.eyebrow} title={contact.title} image="/images/hero2-1920.webp" />
+
+<ContactSection locale={locale} />

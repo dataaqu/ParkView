@@ -1,0 +1,47 @@
+---
+interface Props {
+  href: string;
+  variant?: 'solid' | 'outline' | 'outline-light' | 'ghost';
+  class?: string;
+}
+
+const { href, variant = 'solid', class: className = '' } = Astro.props;
+
+const base =
+  'group relative inline-flex items-center gap-3 overflow-hidden px-8 py-4 text-[0.78rem] font-medium tracking-[0.16em] transition-colors duration-500';
+
+const variants = {
+  solid: 'bg-gold-500 text-white hover:text-white',
+  outline: 'border border-gold-500 text-gold-600 hover:text-white',
+  /* The same button on a photograph: gold-600 type is the dark end of the
+     scale and disappears there, so the hairline and the label go white and
+     only the wipe stays gold. */
+  'outline-light': 'border border-white/35 text-white hover:border-gold-700 hover:text-white',
+  ghost: 'text-ink hover:text-gold-600',
+} as const;
+---
+
+<a href={href} class:list={[base, variants[variant], className]}>
+  {
+    variant !== 'ghost' && (
+      /* Gold wipe rises from the bottom on hover. */
+      <span
+        class="absolute inset-0 origin-bottom scale-y-0 bg-gold-700 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100"
+        aria-hidden="true"
+      />
+    )
+  }
+
+  <span class="relative"><slot /></span>
+
+  <svg
+    class="relative h-3 w-5 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1"
+    viewBox="0 0 20 12"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.25"
+    aria-hidden="true"
+  >
+    <path d="M0 6h18M13 1l5 5-5 5" />
+  </svg>
+</a>

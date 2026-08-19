@@ -1,0 +1,133 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Loader from '../components/Loader.astro';
+import ClosingBand from '../components/sections/ClosingBand.astro';
+import { SITE } from '../config/site';
+import { LOCALE_META, type Locale } from '../i18n/config';
+import { alternates } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  /** Absolute or site-relative image for og:image. */
+  ogImage?: string;
+  /** The call to action now shares the footer's ground, so the layout owns
+      it rather than each page body ending with its own copy. The contact
+      page is the one page that closes without it. */
+  cta?: boolean;
+  /** Passed straight to the closing band: the colour its divider is cut out
+      of, which has to be whatever the page's last section ends on. */
+  closingTone?: 'surface' | 'surface-2';
+}
+
+const {
+  locale,
+  title,
+  description,
+  ogImage = '/og/parkview-og.jpg',
+  cta = true,
+  closingTone = 'surface',
+} = Astro.props;
+
+/* The build emits `/about/index.html`, so Astro.url.pathname carries a
+   trailing slash while `localizedPath()` does not. Normalising here keeps
+   canonical and hreflang pointing at the exact same string. */
+const pathname = Astro.url.pathname.replace(/(.)\/+$/, '$1');
+const canonical = new URL(pathname, SITE.url).href;
+const ogImageUrl = new URL(ogImage, SITE.url).href;
+const langAlternates = alternates(pathname);
+const meta = LOCALE_META[locale];
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateAgent',
+  name: SITE.name,
+  url: SITE.url,
+  telephone: SITE.phone,
+  email: SITE.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '8 Gulia Dimitri Street',
+    addressLocality: 'Tbilisi',
+    addressCountry: 'GE',
+  },
+};
+---
+
+<!doctype html>
+<html lang={meta.htmlLang} dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    {
+      langAlternates.map(({ locale: alt, path }) => (
+        <link rel="alternate" hreflang={LOCALE_META[alt].hreflang} href={new URL(path, SITE.url).href} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={new URL('/', SITE.url).href} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content={meta.hreflang.replace('-', '_')} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="64x64" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    {/* Marks the document as scripted before first paint so reveal targets
+        can start hidden without ever hiding content for no-JS visitors.
+        The same pass decides whether the intro curtain runs: reading the
+        session flag here, rather than after hydration, is what keeps the
+        second page of a visit from flashing a loader it will immediately
+        dismiss. */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try {
+        if (sessionStorage.getItem('pv:intro') === '1') {
+          document.documentElement.classList.add('intro-done');
+        }
+      } catch (error) {
+        document.documentElement.classList.add('intro-done');
+      }
+    </script>
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(organizationSchema)} />
+  </head>
+
+  <body>
+    <Loader />
+
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-5 focus:py-2 focus:text-white"
+    >
+      {locale === 'ka' ? 'ძირითად კონტენტზე გადასვლა' : locale === 'ru' ? 'Перейти к содержимому' : 'Skip to content'}
+    </a>
+
+    <Header locale={locale} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <ClosingBand locale={locale} cta={cta} tone={closingTone} />
+
+    <script>
+      import { initAll } from '../lib/animations';
+      initAll();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+import FeatureGrid from '../FeatureGrid.astro';
+import Button from '../Button.astro';
+
+interface Props {
+  eyebrow?: string;
+  /** Omit when the page banner above already carries this heading. */
+  title?: string;
+  items: { icon: string; title: string; body: string; image?: string }[];
+  /** Label for the link on to the full page. Omitted where there is no such
+      page — the investor privileges are written nowhere else. */
+  cta?: string;
+  ctaHref?: string;
+  /** Alternates the page's warm/white banding. */
+  tone?: 'surface' | 'surface-2';
+  align?: 'left' | 'center';
+  as?: 'h1' | 'h2';
+}
+
+const { eyebrow, title, items, cta, ctaHref, tone = 'surface', align = 'left', as = 'h2' }: Props = Astro.props;
+---
+
+<section class:list={[tone === 'surface-2' ? 'bg-surface-2' : 'bg-surface', 'py-section-sm lg:py-section']}>
+  <div class="container-page">
+    {
+      title && (
+        <SectionHeading eyebrow={eyebrow} title={title} align={align} as={as} class="mb-14 max-w-3xl lg:mb-20" />
+      )
+    }
+
+    <FeatureGrid items={items} />
+
+    {
+      cta && ctaHref && (
+        <div class:list={['mt-14 lg:mt-16', align === 'center' && 'text-center']} data-reveal>
+          <Button href={ctaHref} variant="outline">
+            {cta}
+          </Button>
+        </div>
+      )
+    }
+  </div>
+</section>

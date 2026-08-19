@@ -1,0 +1,241 @@
+---
+import Logo from './Logo.astro';
+import LangSwitcher from './LangSwitcher.astro';
+import { t } from '../content';
+import { ROUTES, type Locale, type RouteKey } from '../i18n/config';
+import { localizedPath, routeFromPath } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = t(locale);
+const current = routeFromPath(Astro.url.pathname);
+
+const links = (Object.keys(ROUTES) as RouteKey[]).map((key) => ({
+  key,
+  label: copy.nav[key],
+  href: localizedPath(locale, key),
+}));
+
+/* Rendered on both sides of the logo, so the classes live in one place.
+   Colour comes from the <style> block below, not from utilities.
+
+   The size steps down between lg and xl. Georgian is the longest of the
+   three languages and it is set bold, so at 1024px a flat 16px pushed the
+   right-hand group into the centred logo — measured, not guessed. */
+const NAV_LINK = (isCurrent: boolean) => [
+  'nav-link relative block py-2 text-[0.9rem] tracking-[0.09em] xl:text-base',
+  'after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0',
+  'after:bg-gold-500 after:transition-transform after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)]',
+  'hover:after:scale-x-100',
+  isCurrent && 'after:scale-x-100',
+];
+
+/* The logo sits in the middle of the bar, so the menu is split around it.
+   ROUTES is ordered home → about → infrastructure → contact, which halves
+   cleanly; if a fifth route is added the extra one lands on the right. */
+const half = Math.ceil(links.length / 2);
+const leftLinks = links.slice(0, half);
+const rightLinks = links.slice(half);
+---
+
+<header
+  data-header
+  class="fixed inset-x-0 top-0 z-50 text-white transition-[background-color,box-shadow] duration-300 ease-out"
+>
+  {/* One nav landmark for the whole bar rather than two half-menus: a
+      screen reader jumping by landmark should reach all four links, not
+      the two that happen to sit left of the logo. */}
+  <nav
+    class="container-page grid h-20 grid-cols-3 items-center gap-4 lg:h-24 lg:grid-cols-[1fr_auto_1fr] lg:gap-6 xl:gap-10"
+    aria-label={copy.common.menu}
+  >
+    <div class="flex items-center justify-start">
+      <button
+        type="button"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label={copy.common.menu}
+        class="relative -ml-3 z-10 flex h-11 w-11 flex-col items-center justify-center gap-[6px] lg:hidden"
+      >
+        <span class="block h-px w-6 bg-current transition-transform duration-400" data-bar-top></span>
+        <span class="block h-px w-6 bg-current transition-opacity duration-300" data-bar-mid></span>
+        <span class="block h-px w-6 bg-current transition-transform duration-400" data-bar-bot></span>
+      </button>
+
+      <ul class="hidden items-center gap-6 lg:flex xl:gap-10">
+        {
+          leftLinks.map(({ key, label, href }) => (
+            <li>
+              <a href={href} aria-current={key === current ? 'page' : undefined} class:list={NAV_LINK(key === current)}>
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <a href={localizedPath(locale, 'home')} class="justify-self-center" aria-label={copy.nav.home}>
+      <Logo variant="switch" />
+    </a>
+
+    <div class="flex items-center justify-end gap-6 xl:gap-10">
+      <ul class="hidden items-center gap-6 lg:flex xl:gap-10">
+        {
+          rightLinks.map(({ key, label, href }) => (
+            <li>
+              <a href={href} aria-current={key === current ? 'page' : undefined} class:list={NAV_LINK(key === current)}>
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <LangSwitcher locale={locale} />
+    </div>
+  </nav>
+</header>
+
+<div
+  id="mobile-menu"
+  data-menu-panel
+  hidden
+  class="fixed inset-0 z-40 flex flex-col justify-center bg-surface px-8 text-ink lg:hidden"
+>
+  {/* Unlabelled on purpose: the bar above already owns the menu landmark,
+      and two navigation landmarks sharing one name is worse than one of
+      them being announced generically. */}
+  <nav class="flex flex-col gap-2">
+    {
+      links.map(({ key, label, href }) => (
+        <a
+          href={href}
+          aria-current={key === current ? 'page' : undefined}
+          class:list={[
+            'nav-link font-display text-3xl font-bold leading-tight transition-colors duration-300',
+            key === current ? 'text-gold-500' : 'hover:text-gold-500',
+          ]}
+        >
+          {label}
+        </a>
+      ))
+    }
+  </nav>
+
+</div>
+
+<style>
+  /* ── Nav colour ────────────────────────────────────────────────────────
+     The links used to be `text-current/85`, i.e. color-mix(currentColor …),
+     while the header itself transitioned `color`. That chained two
+     transitions: the header eased its colour over 300ms, the links eased
+     towards that moving target over another 300ms, and the text crawled in
+     long after the background had already changed.
+
+     Now the header's colour switches instantly (it is out of the header's
+     transition list) and each state paints the links directly, so the only
+     thing animating is one short fade.                                    */
+  header .nav-link {
+    /* Same display face as the headings, in every locale. 700 is a real
+       cut in all three families — Baskerville, Noto Serif Georgian and
+       Noto Serif — so nothing here is a synthesised fake bold. */
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: color-mix(in oklab, #fff 88%, transparent);
+    transition: color 0.15s ease-out;
+  }
+
+  header .nav-link:hover {
+    color: var(--color-gold-400);
+  }
+
+  header.is-solid .nav-link,
+  header.menu-open .nav-link {
+    color: var(--color-ink-soft);
+  }
+
+  header.is-solid .nav-link:hover,
+  header.menu-open .nav-link:hover {
+    color: var(--color-gold-600);
+  }
+
+  /* The current page stays gold in both states. */
+  header .nav-link[aria-current='page'],
+  header.is-solid .nav-link[aria-current='page'] {
+    color: var(--color-gold-500);
+  }
+
+  header.is-solid {
+    background-color: color-mix(in oklab, var(--color-surface) 92%, transparent);
+    backdrop-filter: blur(14px);
+    color: var(--color-ink);
+    box-shadow: 0 1px 0 var(--color-line);
+  }
+
+  /* The panel is open — keep the burger legible over it. */
+  header.menu-open {
+    color: var(--color-ink);
+  }
+
+  [data-menu-panel]:not([hidden]) {
+    animation: menu-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+
+  if (header && toggle && panel) {
+    const top = toggle.querySelector<HTMLElement>('[data-bar-top]');
+    const mid = toggle.querySelector<HTMLElement>('[data-bar-mid]');
+    const bot = toggle.querySelector<HTMLElement>('[data-bar-bot]');
+
+    let isOpen = false;
+
+    const setOpen = (open: boolean) => {
+      isOpen = open;
+      panel.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      header.classList.toggle('menu-open', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+
+      if (top) top.style.transform = open ? 'translateY(7px) rotate(45deg)' : '';
+      if (mid) mid.style.opacity = open ? '0' : '1';
+      if (bot) bot.style.transform = open ? 'translateY(-7px) rotate(-45deg)' : '';
+    };
+
+    toggle.addEventListener('click', () => setOpen(!isOpen));
+
+    // Navigating within the panel should close it; so should Escape.
+    panel.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement).closest('a')) setOpen(false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isOpen) setOpen(false);
+    });
+
+    // A resize into desktop layout leaves the panel orphaned otherwise.
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (event) => {
+      if (event.matches && isOpen) setOpen(false);
+    });
+  }
+</script>

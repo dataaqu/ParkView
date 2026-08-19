@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HomeBody from '../../components/pages/HomeBody.astro';
+import { t } from '../../content';
+
+const locale = 'en' as const;
+const meta = t(locale).home.meta;
+---
+
+{/* The privileges grid closes the page on the warm ground, so the divider
+    below has to be cut out of that rather than out of white. */}
+<BaseLayout locale={locale} title={meta.title} description={meta.description} closingTone="surface-2">
+  <HomeBody locale={locale} />
+</BaseLayout>

@@ -1,0 +1,30 @@
+---
+import PageHero from '../sections/PageHero.astro';
+import InfraPillars from '../sections/InfraPillars.astro';
+import { t } from '../../content';
+import { INFRA_IMAGES } from '../../config/site';
+import type { Locale } from '../../i18n/config';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale }: Props = Astro.props;
+const copy = t(locale);
+const page = copy.infrastructure;
+
+/* The homepage band summarises these same three, so the render list moved to
+   the site config where both can read it. */
+const pillars = copy.home.infrastructure.items.map((item, i) => ({
+  ...item,
+  image: INFRA_IMAGES[i] ?? INFRA_IMAGES[INFRA_IMAGES.length - 1],
+}));
+---
+
+<PageHero eyebrow={page.eyebrow} title={page.title} image="/images/facade-1920.webp" />
+
+{/* The banner above already carries this heading — repeating it here
+    would give the page two identical titles in a row. The master suite band
+    that used to close this page came out on 19 Aug at the client's request,
+    along with its twin on the homepage. */}
+<InfraPillars items={pillars} />

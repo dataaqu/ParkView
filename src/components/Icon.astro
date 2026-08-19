@@ -1,0 +1,82 @@
+---
+import { ArrowUpDown, Fence, Headset, IdCard, Percent, ShieldCheck, Trees, Warehouse } from '@lucide/astro';
+import { siFacebook, siInstagram, siTiktok } from 'simple-icons';
+
+/**
+ * The site's icon set. The names below are the site's own vocabulary; what
+ * draws them is Lucide, with the brand marks coming from Simple Icons because
+ * Lucide carries no logos — it dropped them over trademark policy.
+ *
+ * Three of these names have no Lucide equivalent and are drawn by the nearest
+ * mark that still tells the truth:
+ *
+ *   elevator → arrow-up-down   there is no lift in Lucide; up/down is the
+ *                              mark every lift panel already uses
+ *   passport → id-card         no passport either, and the claim is a
+ *                              residence permit, which an ID card names better
+ *   rooftop  → trees           no roof terrace; the greenery is the part of
+ *                              "a garden and a roof terrace downtown" that
+ *                              actually distinguishes it
+ *
+ * Callers set the size themselves — there is no default here, because a
+ * default plus a caller's `h-9` are two utilities of equal specificity and
+ * the stylesheet's order decides the winner, not the caller.
+ */
+export type IconName =
+  | 'elevator'
+  | 'garage'
+  | 'gate'
+  | 'passport'
+  | 'percentage'
+  | 'verified'
+  | 'rooftop'
+  | 'support'
+  | 'facebook'
+  | 'instagram'
+  | 'tiktok';
+
+interface Props {
+  name: IconName;
+  class?: string;
+}
+
+const { name, class: className = '' }: Props = Astro.props;
+
+/* Lucide is drawn for stroke-width 2 on a 24 box — at the 40 px these render
+   at, that is a 3.3 px line on a site made of 1 px hairlines. 1 lands at about
+   1.7 px, which is the weight Lucide's own 1.5-at-24px setting works out to.
+   This is the one number to turn if the marks read heavy or thin. */
+const STROKE = 1;
+
+const LUCIDE: Partial<Record<IconName, typeof Fence>> = {
+  elevator: ArrowUpDown,
+  garage: Warehouse,
+  gate: Fence,
+  passport: IdCard,
+  percentage: Percent,
+  verified: ShieldCheck,
+  rooftop: Trees,
+  support: Headset,
+};
+
+/* Brand marks are solid glyphs, not line drawings — that is how the logos are
+   specified, and the trademarks are not ours to redraw. */
+const BRAND: Partial<Record<IconName, { title: string; path: string }>> = {
+  facebook: siFacebook,
+  instagram: siInstagram,
+  tiktok: siTiktok,
+};
+
+const Lucide = LUCIDE[name];
+const brand = BRAND[name];
+---
+
+{Lucide && <Lucide class={className} stroke-width={STROKE} />}
+
+{
+  brand && (
+    <svg class={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d={brand.path} />
+    </svg>
+  )
+}

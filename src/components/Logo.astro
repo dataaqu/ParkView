@@ -1,0 +1,76 @@
+---
+interface Props {
+  /**
+   * `switch` renders both marks and lets the header state pick one — the
+   * navy logo is invisible over the hero, and the white one is invisible
+   * over the solid header. `dark` is for anything on a light background.
+   */
+  variant?: 'switch' | 'dark' | 'light';
+  class?: string;
+}
+
+const { variant = 'dark', class: className = '' }: Props = Astro.props;
+
+/* Derived from the client's logo.png, which carries ~31% transparent padding
+   and so rendered small inside any fixed-height box. logo-dark/logo-light are
+   the trimmed 114×75 marks; logo.png itself is left as the untouched original.
+   An SVG is still on the wishlist — see §6 of PROGRESS.md — and would drop
+   straight in here. */
+const WIDTH = 114;
+const HEIGHT = 75;
+const alt = 'PARK VIEW';
+---
+
+{
+  variant === 'switch' ? (
+    <span class:list={['logo relative block', className]}>
+      {/* The header wraps this in a link that carries its own aria-label,
+          so both marks are decorative here. */}
+      <img
+        src="/images/logo-light.png"
+        alt=""
+        aria-hidden="true"
+        width={WIDTH}
+        height={HEIGHT}
+        class="logo-light h-12 w-auto lg:h-16"
+      />
+      <img
+        src="/images/logo-dark.png"
+        alt=""
+        aria-hidden="true"
+        width={WIDTH}
+        height={HEIGHT}
+        class="logo-dark absolute top-0 left-0 h-12 w-auto opacity-0 lg:h-16"
+      />
+    </span>
+  ) : (
+    <img
+      src={variant === 'light' ? '/images/logo-light.png' : '/images/logo-dark.png'}
+      alt={alt}
+      width={WIDTH}
+      height={HEIGHT}
+      class:list={['h-16 w-auto', className]}
+    />
+  )
+}
+
+<style>
+  .logo-light,
+  .logo-dark {
+    /* Matches the nav links' colour flip, not the slower background fade —
+       the two marks swapping at different speeds reads as a glitch. */
+    transition: opacity 0.18s ease-out;
+  }
+
+  /* Once the header goes solid — or the mobile menu opens over a white
+     panel — swap to the navy mark. */
+  :global(header.is-solid) .logo-light,
+  :global(header.menu-open) .logo-light {
+    opacity: 0;
+  }
+
+  :global(header.is-solid) .logo-dark,
+  :global(header.menu-open) .logo-dark {
+    opacity: 1;
+  }
+</style>

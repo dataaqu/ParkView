@@ -1,0 +1,136 @@
+---
+import CtaBand from '../CtaBand.astro';
+import Footer from '../Footer.astro';
+import type { Locale } from '../../i18n/config';
+
+interface Props {
+  locale: Locale;
+  /** The contact page ends on its own details, so it takes no call to action. */
+  cta?: boolean;
+  /** The ground the page ends on, which the divider is cut out of. Every page
+      but the homepage closes on white; the homepage's last band is the warm
+      one, and a white crest on it would show as a shape rather than as an
+      edge. */
+  tone?: 'surface' | 'surface-2';
+}
+
+const { locale, cta = true, tone = 'surface' }: Props = Astro.props;
+---
+
+{/* The page closes on a photograph. The call to action and the footer used to
+    be two warm-grey bands stacked on each other; here they share one ground,
+    which is what makes the ending read as an ending rather than as the page
+    running out.
+
+    The join at the top is cut rather than dissolved: the page's own white
+    reaches down into the band along a slow undulation, so the edge has a shape
+    to it instead of being ruled. Everything above it is the same #fff every
+    page ends on, which is what keeps the seam invisible.
+
+    The important part is that the divider does not sit *on* the photograph.
+    There are only about 80 pixels of sky above the roofline in that render —
+    7% of its height — so any edge drawn over the top of it takes the roof with
+    it, whichever way the crop is anchored. Instead the photograph starts below
+    the divider's deepest point and dissolves in over its first eighty-odd
+    pixels; the strip above it is flat `deep`, which is within a hair of what
+    the night sky reads as once the scrim is on it. Nothing of the render is
+    ever behind the white.
+
+    Below that the scrim thins until the building is showing through behind the
+    contact details, then closes back down so the small type at the very bottom
+    still has something solid under it. */}
+<div class="closing relative overflow-hidden bg-deep" style={`--closing-above: var(--color-${tone})`}>
+  <img
+    src="/images/closing-1920.webp"
+    srcset="/images/closing-1280.webp 1280w, /images/closing-1920.webp 1920w"
+    sizes="100vw"
+    alt=""
+    width="1920"
+    height="1080"
+    loading="lazy"
+    decoding="async"
+    class="closing__photo object-cover object-top"
+  />
+
+  <div class="closing__scrim" aria-hidden="true"></div>
+
+  {/* Drawn to fit the viewport rather than at 200% width: the curve is shaped
+      for this, one long swell falling away to the right, and its depth stays
+      inside 80–115 of 120 so the flat strip left between it and the top of the
+      photograph is never more than about forty pixels. */}
+  <div class="closing__divider" aria-hidden="true">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none" focusable="false">
+      <path d="M0,0H1200V96C1040,120,900,120,760,110C600,98,440,80,280,80C170,80,80,86,0,98Z"></path>
+    </svg>
+  </div>
+
+  {/* With the call to action in place its own vertical padding already clears
+      the crest. Without it the footer starts far higher, so the padding has to
+      be measured off the divider itself. */}
+  <div class:list={['relative', cta ? 'pt-16 lg:pt-24' : 'closing__body--bare']}>
+    {cta && <CtaBand locale={locale} />}
+    <Footer locale={locale} />
+  </div>
+</div>
+
+<style>
+  .closing {
+    --closing-divider-h: 64px;
+  }
+
+  @media (min-width: 1024px) {
+    .closing {
+      --closing-divider-h: 130px;
+    }
+  }
+
+  .closing__body--bare {
+    padding-top: calc(var(--closing-divider-h) + 3rem);
+  }
+
+  .closing__photo {
+    position: absolute;
+    top: var(--closing-divider-h);
+    right: 0;
+    left: 0;
+    height: calc(100% - var(--closing-divider-h));
+    width: 100%;
+    /* Dissolves out of the flat ground above it, so the top of the render is
+       an edge nobody can find rather than a ruled line across the sky. */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--closing-divider-h) * 0.75));
+    mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--closing-divider-h) * 0.75));
+  }
+
+  /* 26 26 46 is --color-deep, written out because these are alpha stops. */
+  .closing__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom in oklab,
+      rgb(26 26 46 / 0.88) 0%,
+      rgb(26 26 46 / 0.66) 40%,
+      rgb(26 26 46 / 0.79) 74%,
+      rgb(26 26 46 / 0.92) 100%
+    );
+  }
+
+  .closing__divider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+  }
+
+  .closing__divider svg {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: var(--closing-divider-h);
+  }
+
+  .closing__divider path {
+    fill: var(--closing-above, var(--color-surface));
+  }
+</style>

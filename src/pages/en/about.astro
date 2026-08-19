@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AboutBody from '../../components/pages/AboutBody.astro';
+import { t } from '../../content';
+
+const locale = 'en' as const;
+const meta = t(locale).about.meta;
+---
+
+<BaseLayout locale={locale} title={meta.title} description={meta.description}>
+  <AboutBody locale={locale} />
+</BaseLayout>

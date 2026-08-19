@@ -1,0 +1,276 @@
+@import 'tailwindcss';
+
+/* ── Fonts ──────────────────────────────────────────────────────────────
+   Libre Baskerville = Latin display serif.
+   FiraGO ships one file covering Latin + Georgian Mkhedruli + Cyrillic,
+   so it backs the display stack for ka/ru and carries all body copy.
+   (FiraGO has no Mtavruli — see the `.eyebrow` rule below.)
+
+   Each FiraGO weight is a ~250 KB woff2 because it carries three scripts,
+   so only the weights the design actually uses are imported: 400 for body
+   copy and Georgian/Cyrillic headings, 500 for eyebrows, buttons and nav.
+   Adding a `font-bold` anywhere means adding `@fontsource/firago/700.css`
+   here too — otherwise the browser fakes it and the Georgian looks smeared. */
+@import '@fontsource/libre-baskerville/400.css';
+@import '@fontsource/libre-baskerville/700.css';
+
+/* Libre Baskerville is Latin + Latin-Ext only — it contains zero Georgian
+   and zero Cyrillic glyphs, so it physically cannot set those scripts; on
+   its own it dropped Georgian and Russian headings onto FiraGO, a sans, and
+   a line like "რატომ PARK VIEW" came out half serif and half sans. Noto
+   Serif carries the same serif voice into Cyrillic; Georgian is handled by
+   the self-hosted face below. */
+@import '@fontsource/noto-serif/cyrillic-400.css';
+@import '@fontsource/noto-serif/cyrillic-700.css';
+
+@import '@fontsource/firago/400.css';
+@import '@fontsource/firago/500.css';
+
+/* Georgian, self-hosted rather than pulled from @fontsource, for two
+   reasons. Noto Serif Georgian's 500 is what actually matches Libre
+   Baskerville's colour — at 400 the Georgian sits visibly lighter next to
+   the Latin — so the 500 file is declared *as* weight 400 and headings keep
+   asking for 400, with no per-language rule anywhere in the stylesheet.
+   The unicode-range then keeps English and Russian pages from ever
+   fetching it. */
+@font-face {
+  font-family: 'Noto Serif Georgian';
+  src:
+    url('/fonts/noto-serif-georgian-500.woff2') format('woff2'),
+    url('/fonts/noto-serif-georgian-500.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+10A0-10FF, U+1C90-1CBF, U+2D00-2D2F;
+}
+
+/* Bold needs no such correction — Noto Serif Georgian 700 already carries
+   the same colour as Libre Baskerville 700, so this one maps straight. */
+@font-face {
+  font-family: 'Noto Serif Georgian';
+  src:
+    url('/fonts/noto-serif-georgian-700.woff2') format('woff2'),
+    url('/fonts/noto-serif-georgian-700.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+10A0-10FF, U+1C90-1CBF, U+2D00-2D2F;
+}
+
+/* FiraGO 900, subset to the five letters of "INFINITY" — the studio credit in
+   the footer, which the client asked to have set heavy and in gold. The full
+   @fontsource 900 file is 210 KB because, like every FiraGO weight, it carries
+   Latin, Georgian and Cyrillic; downloading that for one word in the footer is
+   not a trade worth making, and letting the browser fake the weight instead
+   smears the letterforms. So the face is declared as FiraGO 900 with a
+   unicode-range covering only F I N T Y: nothing else on the site is set at
+   900, and no other character can pull this file down.
+
+   Regenerate after a FiraGO bump:
+     python -m fontTools.subset        node_modules/@fontsource/firago/files/firago-latin-900-normal.woff2        --unicodes="U+46,U+49,U+4E,U+54,U+59"        --flavor=woff2 --output-file=public/fonts/firago-900-infinity.woff2 */
+@font-face {
+  font-family: 'FiraGO';
+  src:
+    url('/fonts/firago-900-infinity.woff2') format('woff2'),
+    url('/fonts/firago-900-infinity.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+46, U+49, U+4E, U+54, U+59;
+}
+
+@theme {
+  /* ── Typography ───────────────────────────────────────────────────── */
+  /* One display voice for every locale. Each family only ever renders
+     the script the others do not cover, so headings read as one face. */
+  --font-display: 'Libre Baskerville', 'Noto Serif Georgian', 'Noto Serif', Georgia, 'Times New Roman', serif;
+  --font-body: 'FiraGO', ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Gold — scale built around vr.ge's #CA9B43 ────────────────────── */
+  --color-gold-50: #fbf7ef;
+  --color-gold-100: #f5ecd9;
+  --color-gold-200: #ebd9b3;
+  --color-gold-300: #dfc286;
+  --color-gold-400: #d4ae60;
+  --color-gold-500: #ca9b43;
+  --color-gold-600: #b48b3e;
+  --color-gold-700: #8a6e2f;
+  --color-gold-800: #6b5523;
+  --color-gold-900: #4a3b18;
+
+  /* ── Ink / neutrals ───────────────────────────────────────────────── */
+  --color-ink: #171717;
+  --color-ink-soft: #353535;
+  --color-muted: #858585;
+  --color-muted-light: #a3a3a3;
+  --color-line: #e5e2dc;
+  --color-deep: #1a1a2e;
+
+  /* ── Surfaces — light by default, per the client brief ────────────── */
+  --color-surface: #ffffff;
+  --color-surface-2: #f7f5f1; /* warm off-white, carries the premium feel */
+  --color-surface-3: #f0eff0; /* vr.ge's cool grey, for alternating bands */
+
+  /* ── Rhythm ───────────────────────────────────────────────────────── */
+  --spacing-section: 7.5rem;
+  --spacing-section-sm: 4.5rem;
+
+  /* ── Motion — shared with GSAP via getComputedStyle where useful ──── */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    /* Lenis drives scrolling; native smooth-scroll would fight it. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    /* 1.12 suited Baskerville alone; Georgian and Cyrillic carry taller
+       ascenders and deeper descenders, and 1.16 clears them in every
+       script without loosening the Latin headings noticeably. */
+    line-height: 1.16;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+
+  ::selection {
+    background-color: var(--color-gold-500);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-600);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* SplitText masks each headline line with `overflow: clip`, and it clips at
+     the line box — which is shallower than the glyphs sitting in it. The base
+     rule above sets 1.16, but the Tailwind size utilities on the headings pull
+     several of them down to 1.0, and there the shipped faces overflow: Noto
+     Serif Georgian and Noto Serif Cyrillic both sit on a 1.36em content area,
+     so a descender falls up to 0.14em below the box and a Cyrillic cap rises
+     0.04em above it. The tails of j, p, ჭ and ჯ were being shaved off. The
+     clip box gets that depth back as padding, and the padding is taken
+     straight back out as negative margin so nothing around it moves. */
+  .split-line-mask {
+    padding-top: 0.09em;
+    padding-bottom: 0.2em;
+    margin-top: -0.09em;
+    margin-bottom: -0.2em;
+  }
+
+  /* Small caps label above a heading (".01", "EMBASSY QUARTER", …).
+     Georgian has no letter case and FiraGO ships no Mtavruli glyphs, so
+     `uppercase` there would render tofu — widen the tracking instead. */
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--color-gold-600);
+  }
+
+  :lang(ka) .eyebrow,
+  .eyebrow:lang(ka) {
+    text-transform: none;
+    letter-spacing: 0.12em;
+  }
+
+  /* Display heading size below `lg`. Georgian sets no hyphens, and the
+     longest word on the site — "ინფრასტრუქტურა" — measures 9.46× the font
+     size wide in Noto Serif Georgian. A flat 2.25rem therefore needs a 396px
+     screen, and a 320px one was clipping the tail off it inside SplitText's
+     `overflow: clip` line masks, silently: the word overflows its mask, so
+     neither the element's scrollWidth nor the document's ever grew.
+
+     So the size tracks the column instead — (100vw − 48px of gutter − 4px of
+     slack) ÷ 9.46 — capped at the 2.25rem it always was, which it reaches at
+     about 392px. Utilities sit in a later cascade layer than components, so
+     `lg:text-5xl` and friends still override this from 1024px up; what they
+     must not do is set a base `text-4xl`, or it wins at every width. */
+  .display-title {
+    font-size: clamp(1.6rem, calc(10.5vw - 5.5px), 2.25rem);
+  }
+
+  .container-page {
+    width: 100%;
+    max-width: 82.5rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .container-page {
+      padding-inline: 3rem;
+    }
+  }
+}
+
+/* While the intro curtain is down the page underneath must not scroll.
+   Unlayered so it outranks anything Lenis or a utility sets on the root. */
+html.js:not(.intro-done) {
+  overflow: hidden;
+}
+
+@layer utilities {
+  /* Elements the scroll animations fade in; hidden until GSAP takes over
+     so there is no flash of positioned content on load. */
+  .js [data-reveal] {
+    opacity: 0;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+}
+
+/* Anyone who asks for less motion gets a static, fully legible page. */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

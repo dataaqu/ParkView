@@ -1,0 +1,306 @@
+---
+import { SITE } from '../config/site';
+
+/**
+ * First-visit intro. Shown once per browser session — the flag is set in the
+ * inline head script in BaseLayout, before first paint, so navigating between
+ * pages never flashes it.
+ *
+ * The slogan stays in English in all three locales: it is a brand line, not
+ * copy, and it is the one string the client gave verbatim.
+ */
+const SLOGAN = 'building better futures';
+---
+
+<div class="loader" data-loader role="status" aria-label={`${SITE.name} — ${SLOGAN}`}>
+  {/* The ground is two halves so it can part rather than merely fade. */}
+  <div class="loader__panel loader__panel--top" data-panel-top aria-hidden="true"></div>
+  <div class="loader__panel loader__panel--bottom" data-panel-bottom aria-hidden="true"></div>
+  <span class="loader__seam" data-seam aria-hidden="true"></span>
+
+  <div class="loader__stage" data-stage>
+    <span class="loader__glow" data-glow aria-hidden="true"></span>
+
+    <span class="loader__logo-wrap">
+      <img
+        class="loader__logo"
+        data-logo
+        src="/images/logo-dark.png"
+        alt=""
+        width="114"
+        height="75"
+        fetchpriority="high"
+        decoding="sync"
+      />
+    </span>
+
+    <span class="loader__slogan" data-slogan>{SLOGAN}</span>
+
+    <span class="loader__bar" data-bar-wrap aria-hidden="true">
+      <span class="loader__bar-fill" data-bar></span>
+    </span>
+  </div>
+</div>
+
+<style>
+  /* Hidden by default so a no-JS visitor never meets a curtain that will
+     not lift, and so the second page of a session paints straight through. */
+  .loader {
+    display: none;
+  }
+
+  :global(html.js:not(.intro-done)) .loader {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: block;
+  }
+
+  .loader__panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    /* A hair over half each: two exact halves leave a seam of the page
+       showing through at fractional device pixel ratios. */
+    height: 50.2%;
+    background-color: var(--color-surface-2);
+    will-change: transform;
+  }
+
+  .loader__panel--top {
+    top: 0;
+  }
+
+  .loader__panel--bottom {
+    bottom: 0;
+  }
+
+  .loader__seam {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-gold-500) 22%,
+      var(--color-gold-400) 50%,
+      var(--color-gold-500) 78%,
+      transparent
+    );
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+
+  /* Starts invisible and with no transforms of its own: GSAP sets every
+     opening position on the first frame. A CSS `transform` here would be
+     read back out of the computed matrix as pixels and then fight the
+     percentage-based tweens — which is exactly why the first version of
+     this loader showed nothing until the very end. */
+  .loader__stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-inline: 1.5rem;
+    opacity: 0;
+  }
+
+  .loader__glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(38rem, 92vw);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    background: radial-gradient(
+      circle,
+      color-mix(in oklab, var(--color-gold-500) 18%, transparent),
+      transparent 62%
+    );
+    pointer-events: none;
+  }
+
+  .loader__logo-wrap {
+    position: relative;
+    display: block;
+    line-height: 0;
+  }
+
+  .loader__logo {
+    display: block;
+    width: auto;
+    height: 4.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .loader__logo {
+      height: 5.5rem;
+    }
+  }
+
+  .loader__slogan {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.26em;
+    /* uppercase + tracking leaves a hole after the last letter. */
+    text-indent: 0.26em;
+    color: var(--color-gold-700);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 640px) {
+    .loader__slogan {
+      font-size: 1.05rem;
+    }
+  }
+
+  .loader__bar {
+    display: block;
+    width: min(13rem, 48vw);
+    height: 1px;
+    overflow: hidden;
+    background-color: color-mix(in oklab, var(--color-ink) 12%, transparent);
+  }
+
+  .loader__bar-fill {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background-color: var(--color-gold-500);
+    transform-origin: left center;
+  }
+
+  /* No curtain at all for anyone who asked for less motion. */
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js:not(.intro-done)) .loader {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { SplitText } from 'gsap/SplitText';
+
+  gsap.registerPlugin(SplitText);
+
+  const root = document.documentElement;
+  const loader = document.querySelector<HTMLElement>('[data-loader]');
+
+  /** Releases the page: scroll lock off, hero and scroll reveals free to run. */
+  const announce = () => {
+    root.classList.add('intro-done');
+    try {
+      sessionStorage.setItem('pv:intro', '1');
+    } catch {
+      // Private mode or blocked storage — the intro simply replays.
+    }
+    window.dispatchEvent(new Event('pv:intro-done'));
+  };
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!loader || root.classList.contains('intro-done') || reduceMotion) {
+    announce();
+  } else {
+    const pick = (selector: string) => loader.querySelector(selector) as HTMLElement;
+
+    const stage = pick('[data-stage]');
+    const glow = pick('[data-glow]');
+    const logo = pick('[data-logo]');
+    const slogan = pick('[data-slogan]');
+    const barWrap = pick('[data-bar-wrap]');
+    const bar = pick('[data-bar]');
+    const panelTop = pick('[data-panel-top]');
+    const panelBottom = pick('[data-panel-bottom]');
+    const seam = pick('[data-seam]');
+
+    /* Long enough for the sequence to land, short enough not to feel like an
+       obstacle. The page normally finishes loading well inside it. */
+    const MIN_MS = 2000;
+    const MAX_MS = 5000;
+    const started = performance.now();
+
+    /** Splitting before the webfont resolves measures the fallback face. */
+    const fontsSettled = Promise.race([
+      document.fonts?.ready ?? Promise.resolve(),
+      new Promise((resolve) => window.setTimeout(resolve, 700)),
+    ]);
+
+    fontsSettled.then(() => {
+      const split = new SplitText(slogan, { type: 'chars', mask: 'chars' });
+      const chars = split.chars;
+
+      // Every opening position is set here, never in CSS — see the note above.
+      gsap.set(bar, { scaleX: 0 });
+      gsap.set(glow, { opacity: 0, scale: 0.72 });
+      gsap.set(logo, { clipPath: 'inset(100% 0% 0% 0%)' });
+      gsap.set(chars, { yPercent: 115 });
+      gsap.set(stage, { opacity: 1 });
+
+      const intro = gsap
+        .timeline({ defaults: { ease: 'expo.out' } })
+        .addLabel('build')
+        .to(glow, { opacity: 1, scale: 1, duration: 1.8, ease: 'power2.out' }, 'build')
+
+        // The mark is drawn upward out of nothing.
+        .to(logo, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.95 }, 'build+=0.15')
+
+        .addLabel('slogan', 'build+=0.7')
+        .to(chars, { yPercent: 0, duration: 0.7, stagger: 0.02 }, 'slogan')
+
+        .to(bar, { scaleX: 0.72, duration: 1.35, ease: 'power2.out' }, 'build+=0.35');
+
+      // A slow breath, so a wait for a heavy render is not dead air.
+      intro.eventCallback('onComplete', () => {
+        gsap.to(logo, { scale: 1.02, duration: 2.4, ease: 'sine.inOut', repeat: -1, yoyo: true });
+        gsap.to(glow, { opacity: 0.55, duration: 2.4, ease: 'sine.inOut', repeat: -1, yoyo: true });
+      });
+
+      const exit = () => {
+        gsap.killTweensOf([logo, glow]);
+
+        gsap
+          .timeline({ defaults: { ease: 'expo.inOut' }, onComplete: announce })
+          .to(bar, { scaleX: 1, duration: 0.35, ease: 'power2.inOut' })
+
+          // Everything leaves the way it arrived, in reverse.
+          .to(chars, { yPercent: -115, duration: 0.45, stagger: 0.014, ease: 'expo.in' }, '-=0.18')
+          .to(logo, { clipPath: 'inset(0% 0% 100% 0%)', duration: 0.5, ease: 'expo.in' }, '<0.06')
+          .to([barWrap, glow], { opacity: 0, duration: 0.3 }, '<')
+
+          // Then the ground itself opens along a gold seam.
+          .addLabel('part')
+          .fromTo(seam, { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: 0.45, ease: 'power3.inOut' }, 'part')
+          .to(panelTop, { yPercent: -100, duration: 0.85 }, 'part+=0.25')
+          .to(panelBottom, { yPercent: 100, duration: 0.85 }, '<')
+          .to(seam, { opacity: 0, duration: 0.4 }, '<0.15')
+          .set(loader, { display: 'none' });
+      };
+
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        gsap.delayedCall(Math.max(0, (MIN_MS - (performance.now() - started)) / 1000), exit);
+      };
+
+      if (document.readyState === 'complete') {
+        finish();
+      } else {
+        window.addEventListener('load', finish, { once: true });
+      }
+
+      // A stalled render must never leave the curtain down.
+      window.setTimeout(finish, MAX_MS);
+    });
+  }
+</script>

@@ -1,0 +1,38 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  body: string;
+}
+
+const { eyebrow, title, body }: Props = Astro.props;
+---
+
+{/* The one dark band on the page. It carries a single idea — where the houses
+    are and what that neighbourhood is — so it is deliberately sparse: heading
+    on the left, one paragraph on the right, and a great deal of air between
+    them. The 5/7 split matches the light sections above it. */}
+<section class="relative overflow-hidden bg-deep py-section-sm text-white lg:py-section" data-district>
+  {/* A single wash of warmth on the dark ground, off to one side. */}
+  <span
+    class="pointer-events-none absolute -top-1/4 -right-1/4 hidden aspect-square w-[42rem] rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--color-gold-500)_14%,transparent),transparent_62%)] lg:block"
+    aria-hidden="true"></span>
+
+  <div class="relative container-page">
+    <div class="grid gap-12 lg:grid-cols-12 lg:gap-20">
+      <div class="lg:col-span-5">
+        {eyebrow && <p class="eyebrow text-gold-300" data-reveal>{eyebrow}</p>}
+
+        <h2 class="display-title mt-4 text-balance text-white lg:text-5xl xl:text-[3.5rem]" data-split style="opacity:0">
+          {title}
+        </h2>
+
+        <span class="mt-8 block h-px w-16 bg-gold-400" data-reveal data-reveal-delay="0.15" aria-hidden="true"></span>
+      </div>
+
+      <div class="lg:col-span-7 lg:pt-4">
+        <p class="text-lg leading-[1.8] text-white/70 lg:text-xl" data-reveal data-reveal-delay="0.1">{body}</p>
+      </div>
+    </div>
+  </div>
+</section>

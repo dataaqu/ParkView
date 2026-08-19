@@ -1,0 +1,91 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+import Button from '../Button.astro';
+import type { Locale } from '../../i18n/config';
+import { localizedPath } from '../../i18n/utils';
+
+interface Props {
+  locale: Locale;
+  eyebrow: string;
+  title: string;
+  body: string[];
+  /** Omitted on the About page, where the CTA would only link to itself. */
+  cta?: string;
+  /** Sets the opening paragraph a size up — for the About page statement. */
+  lead?: boolean;
+  class?: string;
+}
+
+const { locale, eyebrow, title, body, cta, lead = false, class: className = '' }: Props = Astro.props;
+---
+
+<section class:list={['bg-surface py-section-sm lg:py-section', className]}>
+  <div class="container-page grid items-center gap-14 lg:grid-cols-12 lg:gap-20">
+    {/* Stacked renders — the tall one sits behind, the small one overlaps it. */}
+    <div class="relative lg:col-span-6">
+      <div class="overflow-hidden">
+        <img
+          src="/images/about-home-1000.webp"
+          srcset="/images/about-home-640.webp 640w, /images/about-home-1000.webp 1000w"
+          sizes="(min-width: 1024px) 46vw, 100vw"
+          alt=""
+          width="1000"
+          height="1250"
+          loading="lazy"
+          decoding="async"
+          class="aspect-4/5 w-full object-cover"
+          data-parallax="-0.06"
+        />
+      </div>
+
+      <div
+        class="absolute -right-4 -bottom-10 hidden w-1/2 overflow-hidden border-8 border-surface sm:block lg:-right-10"
+        data-reveal
+        data-reveal-delay="0.15"
+      >
+        <img
+          src="/images/about-detail-900.webp"
+          srcset="/images/about-detail-500.webp 500w, /images/about-detail-900.webp 900w"
+          sizes="(min-width: 1024px) 23vw, 46vw"
+          alt=""
+          width="900"
+          height="900"
+          loading="lazy"
+          decoding="async"
+          class="aspect-square w-full object-cover"
+        />
+      </div>
+    </div>
+
+    <div class="lg:col-span-6 lg:pl-6">
+      <SectionHeading eyebrow={eyebrow} title={title} />
+
+      <div class="mt-9 space-y-5">
+        {
+          body.map((paragraph, i) => (
+            <p
+              class:list={[
+                'leading-[1.85] text-ink-soft',
+                lead && i === 0 ? 'text-lg lg:text-xl lg:leading-[1.75]' : 'text-[0.98rem]',
+              ]}
+              data-reveal
+              data-reveal-delay={0.08 + i * 0.08}
+            >
+              {paragraph}
+            </p>
+          ))
+        }
+      </div>
+
+      {
+        cta && (
+          <div class="mt-11" data-reveal data-reveal-delay="0.28">
+            <Button href={localizedPath(locale, 'about')} variant="outline">
+              {cta}
+            </Button>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

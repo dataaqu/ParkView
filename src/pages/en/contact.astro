@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactBody from '../../components/pages/ContactBody.astro';
+import { t } from '../../content';
+
+const locale = 'en' as const;
+const meta = t(locale).contact.meta;
+---
+
+<BaseLayout locale={locale} title={meta.title} description={meta.description} cta={false}>
+  <ContactBody locale={locale} />
+</BaseLayout>

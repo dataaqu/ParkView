@@ -1,0 +1,202 @@
+---
+import { t } from '../content';
+import type { Locale } from '../i18n/config';
+import { localizedPath } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale }: Props = Astro.props;
+const copy = t(locale);
+
+/* Client renders. The originals are 3840×2160 and ~0.5–0.7 MB each, which is
+   far too heavy for an LCP image, so `npm run images` writes 1280 / 1920
+   derivatives next to them and the browser picks. Dropping a replacement in
+   as hero1.webp / hero2.webp and rerunning that script is the whole
+   workflow — nothing here needs editing. */
+const renders = ['hero1', 'hero2'];
+const slides = copy.home.hero.slides.map((slide, i) => {
+  const base = renders[i % renders.length];
+  return {
+    ...slide,
+    src: `/images/${base}-1920.webp`,
+    srcset: `/images/${base}-1280.webp 1280w, /images/${base}-1920.webp 1920w, /images/${base}.webp 3840w`,
+  };
+});
+---
+
+<section class="relative h-[100svh] min-h-[34rem] w-full overflow-hidden bg-surface-3" data-hero>
+  {
+    slides.map((slide, i) => (
+      <div
+        class="absolute inset-0"
+        data-hero-slide
+        data-active={i === 0 ? 'true' : undefined}
+        style={`opacity:${i === 0 ? 1 : 0}`}
+      >
+        <img
+          src={slide.src}
+          srcset={slide.srcset}
+          sizes="100vw"
+          alt=""
+          width="3840"
+          height="2160"
+          loading={i === 0 ? 'eager' : 'lazy'}
+          fetchpriority={i === 0 ? 'high' : undefined}
+          decoding="async"
+          class="h-full w-full scale-105 object-cover"
+          data-hero-image
+        />
+
+        {/* Even scrim rather than a bottom-weighted one: the copy sits in the
+            middle of the frame now, so that is where the contrast is needed. */}
+        <div class="absolute inset-0 bg-gradient-to-b from-deep/55 via-deep/45 to-deep/60" aria-hidden="true" />
+      </div>
+    ))
+  }
+
+  <div class="relative flex h-full items-center">
+    <div class="container-page w-full">
+      {
+        slides.map((slide, i) => {
+          /* Only the first slide is the page's h1 — the others carry the same
+             look but not a second top-level heading in the document. */
+          const Title = i === 0 ? 'h1' : 'p';
+
+          return (
+            <div
+              class="mx-auto max-w-5xl text-center"
+              data-hero-copy
+              data-active={i === 0 ? 'true' : undefined}
+              style={i === 0 ? '' : 'display:none'}
+            >
+              {/* Only the visible slide is line-split: SplitText measures a
+                  `display:none` element as a single zero-width line and the
+                  wrapping never recovers once the slide is shown. */}
+              <Title
+                class="hero-title font-display text-[2.75rem] leading-[1.14] font-bold text-balance text-white sm:text-6xl lg:text-7xl xl:text-[5.5rem]"
+                data-split={i === 0 ? '' : undefined}
+                style={i === 0 ? 'opacity:0' : undefined}
+              >
+                {slide.title}
+              </Title>
+
+              <a
+                href={localizedPath(locale, 'about')}
+                class="group relative mt-10 inline-flex items-center justify-center overflow-hidden border border-white/70 px-9 py-4 text-[0.82rem] font-bold tracking-[0.12em] text-white transition-colors duration-300 hover:border-white lg:mt-12"
+                data-reveal
+                data-reveal-delay="0.35"
+              >
+                <span
+                  class="absolute inset-0 origin-bottom scale-y-0 bg-white transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100"
+                  aria-hidden="true"
+                />
+                <span class="relative transition-colors duration-300 group-hover:text-deep">{slide.cta}</span>
+              </a>
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  [data-hero-slide] {
+    transition: opacity 1.4s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+  }
+
+  /* English only. Georgian has no case, and Noto Serif Georgian's Mtavruli
+     coverage is not something to bet a hero headline on; Russian reads as
+     shouting in caps at this size. */
+  .hero-title:lang(en) {
+    text-transform: uppercase;
+    /* The base heading rule tightens tracking by -0.01em, which is right for
+       lowercase and wrong for caps. */
+    letter-spacing: 0.015em;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  if (hero) {
+    const slides = [...hero.querySelectorAll<HTMLElement>('[data-hero-slide]')];
+    const copies = [...hero.querySelectorAll<HTMLElement>('[data-hero-copy]')];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let index = 0;
+    let timer: ReturnType<typeof setInterval> | undefined;
+
+    const show = (next: number) => {
+      if (next === index || slides.length < 2) return;
+
+      slides[index]?.style.setProperty('opacity', '0');
+      slides[next]?.style.setProperty('opacity', '1');
+
+      copies[index]?.style.setProperty('display', 'none');
+      const incoming = copies[next];
+
+      if (incoming) {
+        incoming.style.removeProperty('display');
+        if (!reduceMotion) {
+          gsap.fromTo(
+            incoming.children,
+            { opacity: 0, y: 28 },
+            { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.08 },
+          );
+        }
+      }
+
+      index = next;
+    };
+
+    const start = () => {
+      if (slides.length < 2) return;
+      timer = setInterval(() => show((index + 1) % slides.length), 6500);
+    };
+
+    // Pause while the tab is hidden so slides do not race ahead unseen.
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (timer) clearInterval(timer);
+      } else {
+        start();
+      }
+    });
+
+    /* Held until the intro curtain lifts, otherwise the nine-second push-in
+       is half spent before anyone sees the image. */
+    const begin = () => {
+      start();
+
+      if (!reduceMotion) {
+        // Slow push-in on the active render.
+        gsap.to(hero.querySelectorAll('[data-hero-image]'), {
+          scale: 1,
+          duration: 9,
+          ease: 'none',
+        });
+      }
+    };
+
+    if (document.documentElement.classList.contains('intro-done')) {
+      begin();
+    } else {
+      let begun = false;
+      const once = () => {
+        if (begun) return;
+        begun = true;
+        begin();
+      };
+      window.addEventListener('pv:intro-done', once, { once: true });
+      window.setTimeout(once, 6000);
+    }
+  }
+</script>
