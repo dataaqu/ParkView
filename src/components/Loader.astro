@@ -143,22 +143,33 @@ const SLOGAN = 'building better futures';
     }
   }
 
+  /* The slogan is one unbreakable line, and at the display tracking it
+     measures 22.5em — 317px at the old flat 0.88rem, against the 312px a
+     360px phone leaves inside the stage gutters. So it ran off both edges
+     and the first and last letters were cut. Below the tablet breakpoint
+     the size therefore follows the viewport and the tracking eases off;
+     the pair keeps the line about 20.6em, which clears the gutters with
+     room to spare all the way down to a 280px screen. */
   .loader__slogan {
     display: block;
     font-family: var(--font-display);
-    font-size: 0.88rem;
+    font-size: clamp(0.66rem, 3.8vw, 0.88rem);
     font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.26em;
+    letter-spacing: 0.18em;
     /* uppercase + tracking leaves a hole after the last letter. */
-    text-indent: 0.26em;
+    text-indent: 0.18em;
     color: var(--color-gold-700);
     white-space: nowrap;
   }
 
+  /* Past the breakpoint there is width to spare, so the line goes back to
+     the tracking the mark was drawn with. */
   @media (min-width: 640px) {
     .loader__slogan {
       font-size: 1.05rem;
+      letter-spacing: 0.26em;
+      text-indent: 0.26em;
     }
   }
 
