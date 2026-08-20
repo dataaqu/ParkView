@@ -34,18 +34,17 @@ export const INFRA_IMAGES = ['/images/infra-elevator', '/images/infra-garage', '
 
 /**
  * Map pin. The old site pointed at the wrong spot — the client flagged it in
- * `Remarks for web site 16-8-2026.docx`. The first replacement was read off a
- * screenshot of Dimitri Gulia Street and was still wrong; these are the
- * coordinates the client centred on, sent twice on 19 Aug (once as a short
- * link, once in full) and identical in both.
+ * `Remarks for web site 16-8-2026.docx`, and the first two replacements were
+ * still off. These are the coordinates behind the short link the client sent
+ * on 20 Aug (`maps.app.goo.gl/oYxkYmtQK2bFeU9P8`), which resolves to a
+ * `/maps/search/41.677945,+44.832838` address.
  *
- * Both of those links open the Ortachala *district* card rather than a pin, so
- * they are not linkable as-is — `href` below is built from the coordinates
- * instead, which is what actually lands a visitor on the building.
+ * The short link is not used directly: it carries session parameters that go
+ * stale, so `href` below is rebuilt from the coordinates instead.
  */
 export const MAP = {
-  lat: 41.678373,
-  lng: 44.8323179,
+  lat: 41.677945,
+  lng: 44.832838,
   zoom: 17,
 } as const;
 
