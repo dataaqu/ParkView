@@ -32,13 +32,16 @@ const { locale, cta = true, tone = 'surface' }: Props = Astro.props;
     7% of its height — so any edge drawn over the top of it takes the roof with
     it, whichever way the crop is anchored. Instead the photograph starts below
     the divider's deepest point and dissolves in over its first eighty-odd
-    pixels; the strip above it is flat `deep`, which is within a hair of what
-    the night sky reads as once the scrim is on it. Nothing of the render is
-    ever behind the white.
+    pixels; the strip above it is flat `deep`, and the scrim stays at its
+    heaviest across that strip so the join still reads as one ground. Nothing
+    of the render is ever behind the white.
 
-    Below that the scrim thins until the building is showing through behind the
-    contact details, then closes back down so the small type at the very bottom
-    still has something solid under it. */}
+    Below that the scrim drops away hard — the client wanted the building
+    open rather than sunk in the dark — then closes partway back down so the
+    small type at the very bottom still has something under it. The type in
+    here carries 500 and higher white alphas to hold up against the lighter
+    ground; 600+ is not an option, since only FiraGO 400/500 are loaded and
+    the browser would fake the rest. */}
 <div class="closing relative overflow-hidden bg-deep" style={`--closing-above: var(--color-${tone})`}>
   <img
     src="/images/closing-1920.webp"
@@ -95,6 +98,10 @@ const { locale, cta = true, tone = 'surface' }: Props = Astro.props;
     left: 0;
     height: calc(100% - var(--closing-divider-h));
     width: 100%;
+    /* The render is a night shot and comes out of the export darker than the
+       rest of the page ends; lifted here rather than in the source file so the
+       same original keeps serving every other crop. */
+    filter: brightness(1.32) saturate(1.06);
     /* Dissolves out of the flat ground above it, so the top of the render is
        an edge nobody can find rather than a ruled line across the sky. */
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--closing-divider-h) * 0.75));
@@ -107,10 +114,11 @@ const { locale, cta = true, tone = 'surface' }: Props = Astro.props;
     inset: 0;
     background: linear-gradient(
       to bottom in oklab,
-      rgb(26 26 46 / 0.88) 0%,
-      rgb(26 26 46 / 0.66) 40%,
-      rgb(26 26 46 / 0.79) 74%,
-      rgb(26 26 46 / 0.92) 100%
+      rgb(26 26 46 / 0.8) 0%,
+      rgb(26 26 46 / 0.38) 22%,
+      rgb(26 26 46 / 0.26) 45%,
+      rgb(26 26 46 / 0.44) 74%,
+      rgb(26 26 46 / 0.64) 100%
     );
   }
 

@@ -30,7 +30,7 @@ const links = (Object.keys(ROUTES) as RouteKey[]).map((key) => ({
     <div class="grid gap-12 lg:grid-cols-[1.2fr_1fr_1fr]">
       <div>
         <Logo variant="light" />
-        <p class="mt-5 max-w-xs text-sm leading-relaxed text-white/60">
+        <p class="mt-5 max-w-xs text-sm font-medium leading-relaxed text-white/85">
           {copy.home.meta.description}
         </p>
       </div>
@@ -47,7 +47,7 @@ const links = (Object.keys(ROUTES) as RouteKey[]).map((key) => ({
               <li>
                 <a
                   href={href}
-                  class="inline-block py-1.5 text-sm text-white/75 transition-colors duration-300 hover:text-gold-300"
+                  class="inline-block py-1.5 text-sm font-medium text-white/90 transition-colors duration-300 hover:text-gold-300"
                 >
                   {label}
                 </a>
@@ -59,7 +59,7 @@ const links = (Object.keys(ROUTES) as RouteKey[]).map((key) => ({
 
       <div>
         <h2 class="eyebrow text-gold-300">{copy.footer.contactTitle}</h2>
-        <ul class="mt-4 space-y-1 text-sm text-white/75">
+        <ul class="mt-4 space-y-1 text-sm font-medium text-white/90">
           <li>
             <a
               href={`tel:${SITE.phoneHref}`}
@@ -76,7 +76,7 @@ const links = (Object.keys(ROUTES) as RouteKey[]).map((key) => ({
               {SITE.email}
             </a>
           </li>
-          <li class="pt-1.5 text-white/55">{ADDRESS[locale]}</li>
+          <li class="pt-1.5 text-white/80">{ADDRESS[locale]}</li>
         </ul>
 
         {/* Under the phone and the address rather than off in the corner:
@@ -86,7 +86,7 @@ const links = (Object.keys(ROUTES) as RouteKey[]).map((key) => ({
     </div>
 
     <div
-      class="mt-14 flex flex-col gap-3 border-t border-white/12 pt-7 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between"
+      class="mt-14 flex flex-col gap-3 border-t border-white/20 pt-7 text-xs font-medium text-white/75 sm:flex-row sm:items-center sm:justify-between"
     >
       <p>© {year} {SITE.name}. {copy.footer.rights}</p>
       {/* gold-400, not the gold-700 this line carried on the old warm ground:
