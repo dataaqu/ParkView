@@ -25,13 +25,13 @@ const leadParts = lead.split(SITE.company);
 {/* Photograph left, statement right, both inside the page gutter so nothing
     touches the viewport edge.
 
-    The image stays landscape (4:3): these renders are 16:9 elevations of a
-    wide building, and a portrait crop cuts the building in half — which is
-    what went wrong in the earlier version of this section. */}
+    On a phone the photo is 4:3 above the text. From lg up it stretches to
+    the full height of the text column (client, 14 Sep: it looked small next
+    to the copy) and crops with object-cover. */}
 <section class="bg-surface py-section-sm lg:py-section">
   <div class="container-page">
-    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
-      <figure class="overflow-hidden">
+    <div class="grid items-center gap-12 lg:grid-cols-2 lg:items-stretch lg:gap-16 xl:gap-20">
+      <figure class="relative overflow-hidden lg:h-full lg:min-h-[32rem]">
         <img
           src="/images/about-primary-1400.webp"
           srcset="/images/about-primary-800.webp 800w, /images/about-primary-1400.webp 1400w"
@@ -41,7 +41,7 @@ const leadParts = lead.split(SITE.company);
           height="1050"
           loading="lazy"
           decoding="async"
-          class="aspect-[4/3] w-full scale-[1.06] object-cover"
+          class="aspect-[4/3] w-full scale-[1.06] object-cover lg:absolute lg:inset-0 lg:aspect-auto lg:h-full"
           data-parallax="-0.05"
         />
       </figure>
