@@ -1,6 +1,6 @@
 # PARK VIEW — პროექტის მდგომარეობა
 
-**ბოლო განახლება:** 2026-08-19
+**ბოლო განახლება:** 2026-09-14
 **ფოლდერი:** `C:\Users\INFINITY SOLUTIONS\Desktop\parkview\parkview-site`
 
 ---
@@ -717,6 +717,26 @@ shapedividers.com-ის SVG ტალღა მოითხოვა — გრ
 რუკა და სურათების pipeline-ის ახსნა.
 
 ⚠️ **commit-ის ავტორობა:** `dataaqu <bspacege@gmail.com>`. Co-author არ დაემატა.
+
+### 2026-09-14 — კომპანია vs პროექტი
+
+ლოკალური ფოლდერი ქრებოდა — repo თავიდან clone-ია `dataaqu/ParkView`-იდან.
+
+კლიენტის მოთხოვნა: **PARK VIEW პროექტია, კომპანია — Galaxy Enterprises.**
+მარკეტინგის ფოკუსი პროექტზე რჩება, მაგრამ კომპანია (ლოგო + სახელი) უნდა ჩანდეს.
+
+- **ლოგო.** კლიენტის PNG მუქ ფონზეა → `scripts/company-logo.mjs` (R−B → alpha)
+  ფონს აჭრის და ორ ვარიანტს წერს: `public/images/company/galaxy-gold` (ღია
+  ფონისთვის, gold-600) და `galaxy-light` (მუქისთვის, gold-300). წყარო:
+  `scripts/source/galaxy-logo.png`. კომპონენტი — `CompanyLogo.astro`.
+- **მთავარი:** ჰერო-ს ქვემოთ `DeveloperStrip` — „დეველოპერი | ლოგო".
+- **ჩვენ შესახებ:** განცხადების სათაური = კომპანიის ლოგო (`about.intro.title`
+  → „Galaxy Enterprises").
+- **Footer:** „დეველოპერი" + ლოგო ყველა გვერდზე; © → `Galaxy Enterprises LLC`,
+  + „PARK VIEW — Galaxy Enterprises-ის პროექტი".
+- **SEO:** meta description-ებში PARK VIEW აღარ „დეველოპერია" — პროექტია;
+  schema.org → `Organization` Galaxy Enterprises LLC, `brand: PARK VIEW`.
+- ახალი კონტენტ-ბლოკი `developer` (label · byline · logoAlt) სამივე ენაზე.
 
 ## 5. რა დარჩა 🔜
 

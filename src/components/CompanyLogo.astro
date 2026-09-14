@@ -1,0 +1,29 @@
+---
+interface Props {
+  /** `gold` for light grounds, `light` for the dark closing band. */
+  variant?: 'gold' | 'light';
+  alt: string;
+  class?: string;
+}
+
+const { variant = 'gold', alt, class: className = '' }: Props = Astro.props;
+
+/* The developer's mark — Galaxy Enterprises, the company behind PARK VIEW.
+   Cut out of the client's dark-ground PNG by scripts/company-logo.mjs, which
+   also sets both variants in the site's own golds. 767×109 after trimming. */
+const WIDTH = 767;
+const HEIGHT = 109;
+---
+
+<picture>
+  <source srcset={`/images/company/galaxy-${variant}.webp`} type="image/webp" />
+  <img
+    src={`/images/company/galaxy-${variant}.png`}
+    alt={alt}
+    width={WIDTH}
+    height={HEIGHT}
+    loading="lazy"
+    decoding="async"
+    class:list={['h-auto w-auto', className]}
+  />
+</picture>

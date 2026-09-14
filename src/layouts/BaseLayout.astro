@@ -40,10 +40,16 @@ const ogImageUrl = new URL(ogImage, SITE.url).href;
 const langAlternates = alternates(pathname);
 const meta = LOCALE_META[locale];
 
+/* The organisation is the developer; PARK VIEW is its project, carried as
+   the brand, so search engines see the same company → project relationship
+   the pages spell out. */
 const organizationSchema = {
   '@context': 'https://schema.org',
-  '@type': 'RealEstateAgent',
-  name: SITE.name,
+  '@type': 'Organization',
+  name: SITE.companyLegal,
+  alternateName: SITE.company,
+  logo: new URL('/images/company/galaxy-gold.png', SITE.url).href,
+  brand: { '@type': 'Brand', name: SITE.name },
   url: SITE.url,
   telephone: SITE.phone,
   email: SITE.email,

@@ -1,5 +1,6 @@
 ---
 import Hero from '../Hero.astro';
+import DeveloperStrip from '../sections/DeveloperStrip.astro';
 import AboutSection from '../sections/AboutSection.astro';
 import WhyGrid from '../sections/WhyGrid.astro';
 import GridSection from '../sections/GridSection.astro';
@@ -37,6 +38,8 @@ const infraItems = home.infrastructure.items.map((item, i) => ({
 ---
 
 <Hero locale={locale} />
+
+<DeveloperStrip locale={locale} />
 
 <AboutSection
   locale={locale}

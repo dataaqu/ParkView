@@ -6,6 +6,8 @@ export const SITE = {
   /** The developer behind it. Opens the About statement; per the client's
       own copy, later mentions in that text stay with the project name. */
   company: 'Galaxy Enterprises',
+  /** Registered name — copyright line and structured data. */
+  companyLegal: 'Galaxy Enterprises LLC',
   url: 'https://parkview.ge',
   phone: '+995 555 05 04 54',
   phoneHref: '+995555050454',

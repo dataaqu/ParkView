@@ -1,0 +1,27 @@
+---
+import CompanyLogo from '../CompanyLogo.astro';
+import { t } from '../../content';
+import type { Locale } from '../../i18n/config';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale }: Props = Astro.props;
+const copy = t(locale).developer;
+---
+
+{/* Straight under the hero: the site sells the project, but the first thing a
+    buyer checks is who stands behind it. One quiet line — the label and the
+    developer's mark — so PARK VIEW stays the headline and
+    Galaxy Enterprises reads as its signature. */}
+<section class="border-b border-line bg-surface" aria-label={copy.label}>
+  <div
+    class="container-page flex flex-col items-center gap-4 py-8 text-center sm:flex-row sm:justify-center sm:gap-8 sm:text-left lg:py-10"
+    data-reveal
+  >
+    <p class="eyebrow">{copy.label}</p>
+    <span class="hidden h-10 w-px bg-line sm:block" aria-hidden="true"></span>
+    <CompanyLogo alt={copy.logoAlt} class="max-h-12 max-w-[min(22rem,82vw)] lg:max-h-14 lg:max-w-[28rem]" />
+  </div>
+</section>

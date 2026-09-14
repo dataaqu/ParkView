@@ -1,5 +1,7 @@
 ---
+import CompanyLogo from '../CompanyLogo.astro';
 import { SITE } from '../../config/site';
+import { t } from '../../content';
 import type { Locale } from '../../i18n/config';
 
 interface Props {
@@ -9,7 +11,8 @@ interface Props {
   body: string[];
 }
 
-const { eyebrow, title, body }: Props = Astro.props;
+const { locale, eyebrow, title, body }: Props = Astro.props;
+const developer = t(locale).developer;
 
 /* The developer's name opens the statement in every language, so it is set
    in gold rather than left as plain body text. Splitting on the name keeps
@@ -46,12 +49,10 @@ const leadParts = lead.split(SITE.company);
       <div class="lg:max-w-[34rem]">
         <p class="eyebrow" data-reveal>{eyebrow}</p>
 
-        <h2
-          class="mt-4 text-4xl leading-[1.08] text-balance text-ink lg:text-5xl xl:text-[3.5rem]"
-          data-split
-          style="opacity:0"
-        >
-          {title}
+        {/* The company is the subject of this statement, so its mark is the
+            heading; the <img> alt gives the h2 its accessible name. */}
+        <h2 class="mt-6" data-reveal data-reveal-delay="0.05">
+          <CompanyLogo alt={developer.logoAlt || title} class="max-h-14 max-w-full lg:max-h-[4.5rem]" />
         </h2>
 
         <span class="mt-8 block h-px w-16 bg-gold-500" data-reveal data-reveal-delay="0.15" aria-hidden="true"></span>
