@@ -2,6 +2,7 @@
 import Hero from '../Hero.astro';
 import DeveloperStrip from '../sections/DeveloperStrip.astro';
 import ProjectsSection from '../sections/ProjectsSection.astro';
+import HomeContactSection from '../sections/HomeContactSection.astro';
 import AboutSection from '../sections/AboutSection.astro';
 import WhyGrid from '../sections/WhyGrid.astro';
 import GridSection from '../sections/GridSection.astro';
@@ -35,8 +36,10 @@ const infraItems = home.infrastructure.items.map((item, i) => ({
 
 <Hero locale={locale} />
 
-{/* Hero → projects → footer (client, 14 Sep). */}
+{/* Hero → projects → contact form → footer (client, 14 Sep). */}
 <ProjectsSection locale={locale} />
+
+<HomeContactSection locale={locale} />
 
 {show.developerStrip && <DeveloperStrip locale={locale} />}
 
