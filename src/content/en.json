@@ -26,13 +26,18 @@
     "hero": {
       "slides": [
         {
-          "eyebrow": "Park View",
-          "title": "Invest in Tbilisi",
+          "eyebrow": "PARK VIEW",
+          "title": "DISCOVER PARK VIEW",
           "cta": "Read more"
         },
         {
           "eyebrow": "PARK VIEW",
-          "title": "Your best residence",
+          "title": "PARK VIEW PRIVATE LIVING IN CENTRAL TBILISI",
+          "cta": "Read more"
+        },
+        {
+          "eyebrow": "PARK VIEW",
+          "title": "PARK VIEW LIVING IN THE HEART OF TBILISI",
           "cta": "Read more"
         }
       ],

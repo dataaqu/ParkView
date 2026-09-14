@@ -26,13 +26,18 @@
     "hero": {
       "slides": [
         {
-          "eyebrow": "Park View",
-          "title": "ჩადეთ ინვესტიცია თბილისში",
+          "eyebrow": "PARK VIEW",
+          "title": "DISCOVER PARK VIEW",
           "cta": "მეტის ნახვა"
         },
         {
           "eyebrow": "PARK VIEW",
-          "title": "თქვენი საუკეთესო რეზიდენცია",
+          "title": "PARK VIEW PRIVATE LIVING IN CENTRAL TBILISI",
+          "cta": "მეტის ნახვა"
+        },
+        {
+          "eyebrow": "PARK VIEW",
+          "title": "PARK VIEW LIVING IN THE HEART OF TBILISI",
           "cta": "მეტის ნახვა"
         }
       ],
