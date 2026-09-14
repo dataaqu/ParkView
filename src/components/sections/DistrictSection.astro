@@ -1,11 +1,17 @@
 ---
+import { MAP_HREF } from '../../config/site';
+
 interface Props {
   eyebrow?: string;
   title: string;
   body: string;
+  /** What surrounds the site — rendered as a list under the paragraph. */
+  points?: string[];
+  /** Label for the "open in Google Maps" link; omitted, no link. */
+  mapLink?: string;
 }
 
-const { eyebrow, title, body }: Props = Astro.props;
+const { eyebrow, title, body, points, mapLink }: Props = Astro.props;
 ---
 
 {/* The one dark band on the page. It carries a single idea — where the houses
@@ -32,6 +38,36 @@ const { eyebrow, title, body }: Props = Astro.props;
 
       <div class="lg:col-span-7 lg:pt-4">
         <p class="text-lg leading-[1.8] text-white/70 lg:text-xl" data-reveal data-reveal-delay="0.1">{body}</p>
+
+        {
+          points && points.length > 0 && (
+            <ul class="mt-10 divide-y divide-white/15 border-y border-white/15">
+              {points.map((point, i) => (
+                <li class="flex gap-5 py-5 text-[0.98rem] leading-relaxed text-white/85" data-reveal data-reveal-delay={0.12 + i * 0.06}>
+                  <span class="font-display text-gold-300" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+
+        {
+          mapLink && (
+            <a
+              href={MAP_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="mt-10 inline-flex items-center gap-2 text-[0.78rem] font-medium tracking-[0.12em] text-gold-300 transition-colors duration-300 hover:text-white"
+              data-reveal
+            >
+              {mapLink}
+              <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                <path d="M4 2h6v6M10 2 2.5 9.5" />
+              </svg>
+            </a>
+          )
+        }
       </div>
     </div>
   </div>

@@ -1,0 +1,65 @@
+---
+import PageHero from '../sections/PageHero.astro';
+import OverviewSection from '../sections/OverviewSection.astro';
+import PlanSection from '../sections/PlanSection.astro';
+import InfraPillars from '../sections/InfraPillars.astro';
+import GallerySection from '../sections/GallerySection.astro';
+import DistrictSection from '../sections/DistrictSection.astro';
+import { t } from '../../content';
+import { INFRA_IMAGES } from '../../config/site';
+import type { Locale } from '../../i18n/config';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale }: Props = Astro.props;
+const copy = t(locale);
+const page = copy.project;
+
+/* Site map, 14 Sep: overview → residences & floor plans → features &
+   specification → gallery → location → "Request details / Book a viewing"
+   (the closing band, picked by route in BaseLayout).
+
+   This page absorbed the old Infrastructure page (now a redirect) and the
+   district + section-drawing bands from About. Their copy is read from where
+   it always lived, so nothing was retranslated. */
+const pillars = copy.home.infrastructure.items.map((item, i) => ({
+  ...item,
+  image: INFRA_IMAGES[i] ?? INFRA_IMAGES[INFRA_IMAGES.length - 1],
+}));
+---
+
+<PageHero eyebrow={page.eyebrow} title={page.title} image="/images/facade-1920.webp" />
+
+<OverviewSection
+  eyebrow={page.overview.eyebrow}
+  title={page.overview.title}
+  body={page.overview.body}
+  facts={page.overview.facts}
+/>
+
+<PlanSection
+  eyebrow={page.residences.eyebrow}
+  title={copy.about.plan.title}
+  body={copy.about.plan.body}
+  caption={copy.about.plan.caption}
+  details={{ eyebrow: copy.home.suite.eyebrow, title: copy.home.suite.title, body: copy.home.suite.body }}
+/>
+
+<InfraPillars eyebrow={page.features.eyebrow} title={copy.home.infrastructure.title} items={pillars} />
+
+<GallerySection
+  eyebrow={page.gallery.eyebrow}
+  title={page.gallery.title}
+  openLabel={page.gallery.open}
+  closeLabel={copy.common.close}
+/>
+
+<DistrictSection
+  eyebrow={copy.home.location.eyebrow}
+  title={copy.home.location.title}
+  body={copy.about.district.body}
+  points={copy.home.location.points}
+  mapLink={page.location.mapLink}
+/>

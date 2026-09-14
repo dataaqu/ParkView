@@ -1,6 +1,5 @@
 ---
 import Logo from './Logo.astro';
-import CompanyLogo from './CompanyLogo.astro';
 import SocialLinks from './SocialLinks.astro';
 import { t } from '../content';
 import { ADDRESS, SITE } from '../config/site';
@@ -30,16 +29,10 @@ const links = (Object.keys(ROUTES) as RouteKey[]).map((key) => ({
   <div class="container-page py-16 lg:py-20">
     <div class="grid gap-12 lg:grid-cols-[1.2fr_1fr_1fr]">
       <div>
-        <Logo variant="light" />
-        <p class="mt-5 max-w-xs text-sm font-medium leading-relaxed text-white/85">
+        <Logo variant="light" class="h-auto w-[18rem]" />
+        <p class="mt-6 max-w-xs text-sm font-medium leading-relaxed text-white/85">
           {copy.home.meta.description}
         </p>
-
-        {/* The developer signs the project here on every page. */}
-        <div class="mt-8 border-t border-white/20 pt-6">
-          <p class="eyebrow text-gold-300">{copy.developer.label}</p>
-          <CompanyLogo variant="light" alt={copy.developer.logoAlt} class="mt-4 max-h-10 max-w-[18rem]" />
-        </div>
       </div>
 
       <div>

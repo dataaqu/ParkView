@@ -33,8 +33,16 @@ export default defineConfig({
   // BaseLayout emits.
   trailingSlash: 'never',
 
-  // Fully static. The one route that used to opt out was the contact form's
-  // endpoint; the form came out on 19 Aug and the endpoint went with it.
+  // Static, except `src/pages/api/contact.ts` (the inquiry form, back since
+  // 14 Sep), which opts out with `prerender = false` and runs as a function.
+  // The Infrastructure page became part of The Project on 14 Sep; old links
+  // keep working. On Vercel these are real 308s.
+  redirects: {
+    '/infrastructure': '/project',
+    '/en/infrastructure': '/en/project',
+    '/ka/infrastructure': '/ka/project',
+  },
+
   output: 'static',
   adapter: vercel(),
 

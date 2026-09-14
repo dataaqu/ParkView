@@ -1,5 +1,6 @@
 ---
 import Icon, { type IconName } from '../Icon.astro';
+import SectionHeading from '../SectionHeading.astro';
 
 interface Item {
   icon: string;
@@ -11,9 +12,12 @@ interface Item {
 
 interface Props {
   items: Item[];
+  /** Section heading, for when the band is one of several on the page. */
+  eyebrow?: string;
+  title?: string;
 }
 
-const { items }: Props = Astro.props;
+const { items, eyebrow, title }: Props = Astro.props;
 ---
 
 {/* The three pillars are the whole of what the client wrote about this
@@ -23,6 +27,8 @@ const { items }: Props = Astro.props;
     version — same sentences, a summary rather than the subject. */}
 <section class="bg-surface py-section-sm lg:py-section">
   <div class="container-page">
+    {title && <SectionHeading eyebrow={eyebrow} title={title} class="mb-16 lg:mb-24" />}
+
     <ul class="space-y-24 lg:space-y-36">
       {
         items.map((item, i) => (

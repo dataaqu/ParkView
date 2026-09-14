@@ -1,10 +1,12 @@
 ---
 import PageHero from '../sections/PageHero.astro';
 import StatementSection from '../sections/StatementSection.astro';
+import ApproachSection from '../sections/ApproachSection.astro';
 import WhyGrid from '../sections/WhyGrid.astro';
 import DistrictSection from '../sections/DistrictSection.astro';
 import PlanSection from '../sections/PlanSection.astro';
 import { t } from '../../content';
+import { SHOW } from '../../config/sections';
 import type { Locale } from '../../i18n/config';
 
 interface Props {
@@ -14,12 +16,16 @@ interface Props {
 const { locale }: Props = Astro.props;
 const copy = t(locale);
 const about = copy.about;
+const show = SHOW.about;
+
+/* Site map, 14 Sep: Galaxy Enterprises (who we are) → Our approach → Why
+   PARK VIEW (the vision) → "Discover the project" (the closing band, picked by
+   route in BaseLayout). District and drawing are shown on The Project page and
+   switched off here in config/sections.ts. */
 ---
 
 <PageHero eyebrow={about.intro.eyebrow} title={copy.nav.about} image="/images/hero1-1920.webp" />
 
-{/* The statement. The homepage carries only its opening paragraph and links
-    here, so a visitor arriving from there reads on rather than reads again. */}
 <StatementSection
   locale={locale}
   eyebrow={about.intro.eyebrow}
@@ -27,27 +33,20 @@ const about = copy.about;
   body={about.intro.body}
 />
 
+{show.approach && <ApproachSection eyebrow={about.approach.eyebrow} title={about.approach.title} items={about.approach.items} />}
+
 <WhyGrid
   eyebrow={about.why.eyebrow}
   title={about.why.title}
   body={about.why.body}
-  features={about.why.features}
+  features={show.whyFeatures ? about.why.features : undefined}
   assurances={about.why.assurances}
 />
 
-{/* The neighbourhood itself, on the dark ground — the only such band on the
-    page, which is what marks it as the turn in the argument. */}
-<DistrictSection
-  eyebrow={about.district.eyebrow}
-  title={about.district.title}
-  body={about.district.body}
-/>
+{show.district && <DistrictSection eyebrow={about.district.eyebrow} title={about.district.title} body={about.district.body} />}
 
-{/* The drawing closes the argument: everything argued above, in one section
-    through the building. The homepage carries the location list instead. */}
-<PlanSection
-  eyebrow={about.plan.eyebrow}
-  title={about.plan.title}
-  body={about.plan.body}
-  caption={about.plan.caption}
-/>
+{
+  show.plan && (
+    <PlanSection eyebrow={about.plan.eyebrow} title={about.plan.title} body={about.plan.body} caption={about.plan.caption} />
+  )
+}

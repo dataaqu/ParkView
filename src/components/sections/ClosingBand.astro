@@ -1,5 +1,5 @@
 ---
-import CtaBand from '../CtaBand.astro';
+import CtaBand, { type CtaCopy } from '../CtaBand.astro';
 import Footer from '../Footer.astro';
 import type { Locale } from '../../i18n/config';
 
@@ -12,9 +12,10 @@ interface Props {
       one, and a white crest on it would show as a shape rather than as an
       edge. */
   tone?: 'surface' | 'surface-2';
+  ctaCopy?: CtaCopy;
 }
 
-const { locale, cta = true, tone = 'surface' }: Props = Astro.props;
+const { locale, cta = true, tone = 'surface', ctaCopy }: Props = Astro.props;
 ---
 
 {/* The page closes on a photograph. The call to action and the footer used to
@@ -71,7 +72,7 @@ const { locale, cta = true, tone = 'surface' }: Props = Astro.props;
       the crest. Without it the footer starts far higher, so the padding has to
       be measured off the divider itself. */}
   <div class:list={['relative', cta ? 'pt-16 lg:pt-24' : 'closing__body--bare']}>
-    {cta && <CtaBand locale={locale} />}
+    {cta && <CtaBand locale={locale} copy={ctaCopy} />}
     <Footer locale={locale} />
   </div>
 </div>

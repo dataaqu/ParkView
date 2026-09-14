@@ -6,9 +6,11 @@ interface Props {
   /** Title-block line printed under the drawing, in the drawing's own voice. */
   caption: string;
   image?: string;
+  /** A written room description under the drawing (the master-suite floor). */
+  details?: { eyebrow?: string; title: string; body: string[] };
 }
 
-const { eyebrow, title, body, caption, image = '/images/facade-plan-1024.webp' }: Props = Astro.props;
+const { eyebrow, title, body, caption, image = '/images/facade-plan-1024.webp', details }: Props = Astro.props;
 ---
 
 {/* The architect's sectional drawing is the one piece on the site that shows
@@ -67,6 +69,24 @@ const { eyebrow, title, body, caption, image = '/images/facade-plan-1024.webp' }
         <span class="text-gold-600" aria-hidden="true">PARK VIEW</span>
       </figcaption>
     </figure>
+
+    {
+      details && (
+        <div class="mx-auto mt-16 grid max-w-[68rem] gap-8 border-t border-line pt-12 lg:mt-24 lg:grid-cols-12 lg:gap-16 lg:pt-16">
+          <div class="lg:col-span-4">
+            {details.eyebrow && <p class="eyebrow" data-reveal>{details.eyebrow}</p>}
+            <h3 class="mt-3 font-display text-3xl leading-snug text-ink lg:text-4xl" data-reveal>{details.title}</h3>
+          </div>
+          <div class="space-y-5 lg:col-span-8">
+            {details.body.map((paragraph, i) => (
+              <p class="text-[0.98rem] leading-[1.85] text-ink-soft" data-reveal data-reveal-delay={0.08 + i * 0.08}>
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </div>
+      )
+    }
   </div>
 </section>
 

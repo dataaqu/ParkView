@@ -18,7 +18,7 @@ interface Props {
   eyebrow?: string;
   title: string;
   body: string;
-  features: Feature[];
+  features?: Feature[];
   /** Omitted on the homepage: the three one-word assurances are the end of
       the argument, and the homepage band is only its opening. */
   assurances?: Assurance[];
@@ -46,6 +46,7 @@ const { eyebrow, title, body, features, assurances, cta, ctaHref }: Props = Astr
       </div>
     </div>
 
+    {features && features.length > 0 && (
     <ul class="mt-16 grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-3 lg:mt-20">
       {
         features.map((feature, i) => (
@@ -71,6 +72,7 @@ const { eyebrow, title, body, features, assurances, cta, ctaHref }: Props = Astr
         ))
       }
     </ul>
+    )}
 
     {/* Three words, so they get one line rather than three empty cards. */}
     {

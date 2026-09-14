@@ -3,9 +3,11 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Loader from '../components/Loader.astro';
 import ClosingBand from '../components/sections/ClosingBand.astro';
+import type { CtaCopy } from '../components/CtaBand.astro';
 import { SITE } from '../config/site';
 import { LOCALE_META, type Locale } from '../i18n/config';
-import { alternates } from '../i18n/utils';
+import { alternates, localizedPath, routeFromPath } from '../i18n/utils';
+import { t } from '../content';
 
 interface Props {
   locale: Locale;
@@ -20,6 +22,8 @@ interface Props {
   /** Passed straight to the closing band: the colour its divider is cut out
       of, which has to be whatever the page's last section ends on. */
   closingTone?: 'surface' | 'surface-2';
+  /** The page's own next step, when it has one on the site map. */
+  ctaCopy?: CtaCopy;
 }
 
 const {
@@ -29,6 +33,7 @@ const {
   ogImage = '/og/parkview-og.jpg',
   cta = true,
   closingTone = 'surface',
+  ctaCopy: ctaOverride,
 } = Astro.props;
 
 /* The build emits `/about/index.html`, so Astro.url.pathname carries a
@@ -38,6 +43,18 @@ const pathname = Astro.url.pathname.replace(/(.)\/+$/, '$1');
 const canonical = new URL(pathname, SITE.url).href;
 const ogImageUrl = new URL(ogImage, SITE.url).href;
 const langAlternates = alternates(pathname);
+
+/* Site map, 14 Sep: About ends on "Discover the project", The Project on
+   "Request details / Book a viewing". Every other page keeps the generic call. */
+const copy = t(locale);
+const route = routeFromPath(pathname);
+const ctaCopy: CtaCopy | undefined =
+  ctaOverride ??
+  (route === 'about'
+    ? { ...copy.about.next, href: localizedPath(locale, 'project') }
+    : route === 'project'
+      ? { ...copy.project.next, href: localizedPath(locale, 'contact') }
+      : undefined);
 const meta = LOCALE_META[locale];
 
 /* The organisation is the developer; PARK VIEW is its project, carried as
@@ -129,7 +146,7 @@ const organizationSchema = {
       <slot />
     </main>
 
-    <ClosingBand locale={locale} cta={cta} tone={closingTone} />
+    <ClosingBand locale={locale} cta={cta} tone={closingTone} ctaCopy={ctaCopy} />
 
     <script>
       import { initAll } from '../lib/animations';

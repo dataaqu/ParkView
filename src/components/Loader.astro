@@ -25,10 +25,10 @@ const SLOGAN = 'building better futures';
       <img
         class="loader__logo"
         data-logo
-        src="/images/logo-dark.png"
+        src="/images/company/galaxy-gold.png"
         alt=""
-        width="114"
-        height="75"
+        width="767"
+        height="109"
         fetchpriority="high"
         decoding="sync"
       />
@@ -131,15 +131,16 @@ const SLOGAN = 'building better futures';
     line-height: 0;
   }
 
+  /* The Galaxy mark is a wide lockup (7:1), so it is sized by width. */
   .loader__logo {
     display: block;
-    width: auto;
-    height: 4.5rem;
+    width: min(80vw, 22rem);
+    height: auto;
   }
 
   @media (min-width: 1024px) {
     .loader__logo {
-      height: 5.5rem;
+      width: 30rem;
     }
   }
 

@@ -6,6 +6,7 @@ import WhyGrid from '../sections/WhyGrid.astro';
 import GridSection from '../sections/GridSection.astro';
 import { t } from '../../content';
 import { INFRA_IMAGES } from '../../config/site';
+import { SHOW } from '../../config/sections';
 import type { Locale } from '../../i18n/config';
 import { localizedPath } from '../../i18n/utils';
 
@@ -16,21 +17,15 @@ interface Props {
 const { locale } = Astro.props;
 const copy = t(locale);
 const home = copy.home;
+const show = SHOW.home;
 
-/* The homepage is the hub: every band on it is the opening of a section that
-   is finished on one of the inner pages, and carries the link that gets there.
-   The one exception is the investor privileges, which are written nowhere else
-   and so end where they start.
-
-   The master suite band and the Ortachala band were both taken out on 19 Aug
-   at the client's request — `home.suite` and `home.location` are still in the
-   three content files, unused, in case either comes back. */
+/* Site map, 14 Sep: the homepage is the hero with its main message and two
+   buttons — "Explore the project" and "Contact us". The bands below are kept,
+   switched off in config/sections.ts, not deleted. */
 const readMore = copy.common.readMore;
 const aboutHref = localizedPath(locale, 'about');
-const infraHref = localizedPath(locale, 'infrastructure');
+const projectHref = localizedPath(locale, 'project');
 
-/* Same three items the infrastructure page runs at plate size, here with the
-   render on the card — a summary of that page rather than a second copy of it. */
 const infraItems = home.infrastructure.items.map((item, i) => ({
   ...item,
   image: INFRA_IMAGES[i] ?? INFRA_IMAGES[INFRA_IMAGES.length - 1],
@@ -39,41 +34,52 @@ const infraItems = home.infrastructure.items.map((item, i) => ({
 
 <Hero locale={locale} />
 
-<DeveloperStrip locale={locale} />
+{show.developerStrip && <DeveloperStrip locale={locale} />}
 
-<AboutSection
-  locale={locale}
-  eyebrow={home.about.eyebrow}
-  title={home.about.title}
-  body={home.about.body}
-  cta={home.about.cta}
-/>
+{
+  show.about && (
+    <AboutSection
+      locale={locale}
+      eyebrow={home.about.eyebrow}
+      title={home.about.title}
+      body={home.about.body}
+      cta={home.about.cta}
+    />
+  )
+}
 
-{/* The About page's argument, opened here: the heading, the paragraph and the
-    three features — but not the closing assurances, which stay on the page
-    they belong to. */}
-<WhyGrid
-  eyebrow={copy.about.why.eyebrow}
-  title={copy.about.why.title}
-  body={copy.about.why.body}
-  features={copy.about.why.features}
-  cta={readMore}
-  ctaHref={aboutHref}
-/>
+{
+  show.why && (
+    <WhyGrid
+      eyebrow={copy.about.why.eyebrow}
+      title={copy.about.why.title}
+      body={copy.about.why.body}
+      features={copy.about.why.features}
+      cta={readMore}
+      ctaHref={aboutHref}
+    />
+  )
+}
 
-<GridSection
-  eyebrow={home.infrastructure.eyebrow}
-  title={home.infrastructure.title}
-  items={infraItems}
-  cta={readMore}
-  ctaHref={infraHref}
-/>
+{
+  show.infrastructure && (
+    <GridSection
+      eyebrow={home.infrastructure.eyebrow}
+      title={home.infrastructure.title}
+      items={infraItems}
+      cta={readMore}
+      ctaHref={projectHref}
+    />
+  )
+}
 
-{/* No link out: this is the one band on the page that is not a summary of
-    anything — the privileges appear here and nowhere else. */}
-<GridSection
-  eyebrow={home.privileges.eyebrow}
-  title={home.privileges.title}
-  items={home.privileges.items}
-  tone="surface-2"
-/>
+{
+  show.privileges && (
+    <GridSection
+      eyebrow={home.privileges.eyebrow}
+      title={home.privileges.title}
+      items={home.privileges.items}
+      tone="surface-2"
+    />
+  )
+}

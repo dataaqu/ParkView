@@ -1,8 +1,10 @@
 ---
+import ContactForm from '../ContactForm.astro';
+import Icon, { type IconName } from '../Icon.astro';
 import MapEmbed from '../MapEmbed.astro';
 import SocialLinks from '../SocialLinks.astro';
 import { t } from '../../content';
-import { ADDRESS, SITE } from '../../config/site';
+import { ADDRESS, MAP_HREF, SITE } from '../../config/site';
 import type { Locale } from '../../i18n/config';
 
 interface Props {
@@ -11,76 +13,83 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = t(locale);
+const contact = copy.contact;
+const actions = contact.actions;
 
-const labels: Record<Locale, { phone: string; email: string; address: string; social: string }> = {
-  ka: { phone: 'ტელეფონი', email: 'ელფოსტა', address: 'მისამართი', social: 'სოციალური ქსელები' },
-  en: { phone: 'Phone', email: 'Email', address: 'Address', social: 'Social' },
-  ru: { phone: 'Телефон', email: 'Эл. почта', address: 'Адрес', social: 'Соцсети' },
-};
+/* Site map, 14 Sep: the inquiry form (name, phone, email, message → a
+   confirmation), and beside it the direct routes — WhatsApp, call, email,
+   view location. The form came back after being dropped on 19 Aug. */
+const whatsappHref = `https://wa.me/${SITE.phoneHref.replace(/\D/g, '')}`;
 
-const label = labels[locale];
+const routes: { icon: IconName; title: string; detail: string; href: string; external?: boolean }[] = [
+  { icon: 'whatsapp', title: actions.whatsapp.title, detail: actions.whatsapp.body, href: whatsappHref, external: true },
+  { icon: 'phone', title: actions.call.title, detail: SITE.phone, href: `tel:${SITE.phoneHref}` },
+  { icon: 'mail', title: actions.email.title, detail: SITE.email, href: `mailto:${SITE.email}` },
+  { icon: 'map', title: actions.location.title, detail: ADDRESS[locale], href: MAP_HREF, external: true },
+];
 ---
 
-{/* No form. With it gone the page has one job — hand over the two ways to
-    reach the company and show where the building is — so the details column
-    stays narrow and the map takes the width the form used to. */}
 <section class="bg-surface py-section-sm lg:py-section">
   <div class="container-page grid gap-16 lg:grid-cols-12 lg:gap-20">
-    <div class="lg:col-span-5">
-      {/* The lead paragraph the client dropped on 19 Aug stood here. It was
-          written for a form — "write to us about yourself" — and with the form
-          gone one large word does the same work: it names the column and gives
-          the details something to hang under. `contact.intro` is still in the
-          three content files, unused, because nothing here is under version
-          control and the copy is the client's. */}
-      <h2 class="text-5xl text-ink lg:text-6xl xl:text-7xl" data-split style="opacity:0">
-        {copy.nav.contact}
+    <div class="lg:col-span-7">
+      <h2 class="display-title text-ink lg:text-5xl xl:text-[3.5rem]" data-split style="opacity:0">
+        {contact.form.title}
       </h2>
 
       <span class="mt-8 block h-px w-16 bg-gold-500" data-reveal data-reveal-delay="0.15" aria-hidden="true"></span>
 
-      {/* Phone and email are set at heading scale, not list scale: they are
-          the whole point of the page and there is nothing left to compete
-          with them. */}
-      <dl class="mt-12 divide-y divide-line border-y border-line">
-        <div class="py-7" data-reveal>
-          <dt class="eyebrow">{label.phone}</dt>
-          <dd class="mt-3">
-            <a
-              href={`tel:${SITE.phoneHref}`}
-              class="font-display text-2xl text-ink transition-colors duration-300 hover:text-gold-600 lg:text-[1.75rem]"
-            >
-              {SITE.phone}
-            </a>
-          </dd>
-        </div>
+      <p class="mt-8 max-w-xl text-[0.98rem] leading-[1.85] text-ink-soft" data-reveal data-reveal-delay="0.1">
+        {contact.intro}
+      </p>
 
-        <div class="py-7" data-reveal data-reveal-delay="0.08">
-          <dt class="eyebrow">{label.email}</dt>
-          <dd class="mt-3">
-            <a
-              href={`mailto:${SITE.email}`}
-              class="font-display text-2xl break-all text-ink transition-colors duration-300 hover:text-gold-600 lg:text-[1.75rem]"
-            >
-              {SITE.email}
-            </a>
-          </dd>
-        </div>
-
-        <div class="py-7" data-reveal data-reveal-delay="0.16">
-          <dt class="eyebrow">{label.address}</dt>
-          <dd class="mt-3 text-[0.98rem] text-ink">{ADDRESS[locale]}</dd>
-        </div>
-      </dl>
-
-      <div class="mt-12" data-reveal data-reveal-delay="0.2">
-        <p class="eyebrow">{label.social}</p>
-        <SocialLinks class="mt-5" />
+      <div class="mt-12" data-reveal data-reveal-delay="0.15">
+        <ContactForm locale={locale} />
       </div>
     </div>
 
-    <div class="lg:col-span-7" data-reveal data-reveal-delay="0.1">
-      <MapEmbed locale={locale} />
-    </div>
+    <aside class="lg:col-span-5">
+      <p class="eyebrow" data-reveal>{actions.title}</p>
+
+      <ul class="mt-6 space-y-3">
+        {
+          routes.map((route, i) => (
+            <li data-reveal data-reveal-delay={i * 0.06}>
+              <a
+                href={route.href}
+                target={route.external ? '_blank' : undefined}
+                rel={route.external ? 'noopener noreferrer' : undefined}
+                class="group flex items-center gap-5 border border-line bg-surface-2 p-5 transition-colors duration-300 hover:border-gold-500 lg:p-6"
+              >
+                <span class="grid h-12 w-12 shrink-0 place-items-center bg-surface text-gold-600 transition-colors duration-300 group-hover:bg-gold-500 group-hover:text-white">
+                  <Icon name={route.icon} class="h-5 w-5" />
+                </span>
+                <span class="min-w-0 flex-1">
+                  <span class="block font-display text-lg leading-snug text-ink">{route.title}</span>
+                  <span class="mt-1 block truncate text-sm text-muted">{route.detail}</span>
+                </span>
+                <svg
+                  class="h-3 w-5 shrink-0 text-gold-600 transition-transform duration-500 group-hover:translate-x-1"
+                  viewBox="0 0 20 12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.25"
+                  aria-hidden="true"
+                >
+                  <path d="M0 6h18M13 1l5 5-5 5" />
+                </svg>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-10" data-reveal data-reveal-delay="0.2">
+        <SocialLinks />
+      </div>
+    </aside>
+  </div>
+
+  <div class="container-page mt-16 lg:mt-24" data-reveal>
+    <MapEmbed locale={locale} />
   </div>
 </section>

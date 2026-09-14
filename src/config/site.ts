@@ -30,7 +30,7 @@ export const ADDRESS: Record<Locale, string> = {
  * One render per infrastructure pillar, in content order. Kept here rather
  * than in the translations: the picture is the same on every locale, and a
  * path in a JSON file is a path nobody remembers to update. Read by both the
- * infrastructure page and the homepage band that links to it.
+ * features band on The Project page.
  */
 export const INFRA_IMAGES = ['/images/infra-elevator', '/images/infra-garage', '/images/infra-gate'] as const;
 

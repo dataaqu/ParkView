@@ -19,7 +19,7 @@ export const LOCALE_META: Record<Locale, { label: string; short: string; hreflan
 export const ROUTES = {
   home: '',
   about: 'about',
-  infrastructure: 'infrastructure',
+  project: 'project',
   contact: 'contact',
 } as const;
 

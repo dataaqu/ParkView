@@ -1,6 +1,21 @@
 ---
-import { ArrowUpDown, Fence, Headset, IdCard, Percent, ShieldCheck, Trees, Warehouse } from '@lucide/astro';
-import { siFacebook, siInstagram, siTiktok } from 'simple-icons';
+import {
+  ArrowUpDown,
+  Building2,
+  Fence,
+  Gem,
+  Headset,
+  IdCard,
+  Lock,
+  Mail,
+  MapPin,
+  Percent,
+  Phone,
+  ShieldCheck,
+  Trees,
+  Warehouse,
+} from '@lucide/astro';
+import { siFacebook, siInstagram, siTiktok, siWhatsapp } from 'simple-icons';
 
 /**
  * The site's icon set. The names below are the site's own vocabulary; what
@@ -31,6 +46,13 @@ export type IconName =
   | 'verified'
   | 'rooftop'
   | 'support'
+  | 'quality'
+  | 'privacy'
+  | 'architecture'
+  | 'phone'
+  | 'mail'
+  | 'map'
+  | 'whatsapp'
   | 'facebook'
   | 'instagram'
   | 'tiktok';
@@ -57,6 +79,12 @@ const LUCIDE: Partial<Record<IconName, typeof Fence>> = {
   verified: ShieldCheck,
   rooftop: Trees,
   support: Headset,
+  quality: Gem,
+  privacy: Lock,
+  architecture: Building2,
+  phone: Phone,
+  mail: Mail,
+  map: MapPin,
 };
 
 /* Brand marks are solid glyphs, not line drawings — that is how the logos are
@@ -65,6 +93,7 @@ const BRAND: Partial<Record<IconName, { title: string; path: string }>> = {
   facebook: siFacebook,
   instagram: siInstagram,
   tiktok: siTiktok,
+  whatsapp: siWhatsapp,
 };
 
 const Lucide = LUCIDE[name];

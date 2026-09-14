@@ -1,0 +1,139 @@
+---
+import { t } from '../content';
+import type { Locale } from '../i18n/config';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale }: Props = Astro.props;
+const f = t(locale).contact.form;
+
+const INPUT =
+  'mt-2 block w-full border-0 border-b border-line bg-transparent px-0 py-3 text-[0.98rem] text-ink placeholder:text-muted-light focus:border-gold-500 focus:ring-0 focus:outline-none transition-colors duration-300';
+---
+
+<form
+  class="grid gap-8 sm:grid-cols-2"
+  novalidate
+  data-contact-form
+  data-locale={locale}
+  data-msg-required={f.required}
+  data-msg-email={f.invalidEmail}
+  data-msg-sending={f.sending}
+  data-msg-success={f.success}
+  data-msg-error={f.error}
+>
+  {/* Honeypot — hidden from people and screen readers, tempting to bots. */}
+  <div class="hidden" aria-hidden="true">
+    <label>Company <input type="text" name="company" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  <div>
+    <label for="cf-name" class="eyebrow">{f.name} *</label>
+    <input id="cf-name" name="name" type="text" required autocomplete="name" placeholder={f.namePlaceholder} class={INPUT} />
+    <p class="mt-2 hidden text-xs text-red-700" data-error-for="name"></p>
+  </div>
+
+  <div>
+    <label for="cf-phone" class="eyebrow">{f.phone}</label>
+    <input id="cf-phone" name="phone" type="tel" autocomplete="tel" placeholder={f.phonePlaceholder} class={INPUT} />
+  </div>
+
+  <div class="sm:col-span-2">
+    <label for="cf-email" class="eyebrow">{f.email} *</label>
+    <input id="cf-email" name="email" type="email" required autocomplete="email" placeholder={f.emailPlaceholder} class={INPUT} />
+    <p class="mt-2 hidden text-xs text-red-700" data-error-for="email"></p>
+  </div>
+
+  <div class="sm:col-span-2">
+    <label for="cf-message" class="eyebrow">{f.message}</label>
+    <textarea id="cf-message" name="message" rows="4" placeholder={f.messagePlaceholder} class:list={[INPUT, 'resize-y']}></textarea>
+  </div>
+
+  <div class="flex flex-col gap-5 sm:col-span-2 sm:flex-row sm:items-center">
+    <button
+      type="submit"
+      class="group relative inline-flex items-center justify-center gap-3 overflow-hidden bg-gold-500 px-10 py-4 text-[0.78rem] font-medium tracking-[0.16em] text-white disabled:opacity-60"
+    >
+      <span
+        class="absolute inset-0 origin-bottom scale-y-0 bg-gold-700 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100"
+        aria-hidden="true"
+      ></span>
+      <span class="relative" data-submit-label>{f.submit}</span>
+    </button>
+
+    <p class="text-sm leading-relaxed" role="status" aria-live="polite" data-form-status></p>
+  </div>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-contact-form]').forEach((form) => {
+    const status = form.querySelector<HTMLElement>('[data-form-status]');
+    const label = form.querySelector<HTMLElement>('[data-submit-label]');
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const msg = form.dataset;
+    const idle = label?.textContent ?? '';
+
+    const setError = (name: string, text: string) => {
+      const el = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+      const input = form.elements.namedItem(name) as HTMLInputElement | null;
+      if (el) {
+        el.textContent = text;
+        el.classList.toggle('hidden', !text);
+      }
+      input?.setAttribute('aria-invalid', text ? 'true' : 'false');
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
+
+      let valid = true;
+      setError('name', '');
+      setError('email', '');
+      if (!data.name?.trim()) {
+        setError('name', msg.msgRequired ?? '');
+        valid = false;
+      }
+      if (!data.email?.trim()) {
+        setError('email', msg.msgRequired ?? '');
+        valid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
+        setError('email', msg.msgEmail ?? '');
+        valid = false;
+      }
+      if (!valid) return;
+
+      if (button) button.disabled = true;
+      if (label) label.textContent = msg.msgSending ?? '';
+      if (status) {
+        status.textContent = '';
+        status.className = 'text-sm leading-relaxed';
+      }
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ ...data, locale: form.dataset.locale }),
+        });
+        if (!response.ok) throw new Error(String(response.status));
+
+        form.reset();
+        if (status) {
+          status.textContent = msg.msgSuccess ?? '';
+          status.classList.add('text-gold-700');
+        }
+      } catch {
+        if (status) {
+          status.textContent = msg.msgError ?? '';
+          status.classList.add('text-red-700');
+        }
+      } finally {
+        if (button) button.disabled = false;
+        if (label) label.textContent = idle;
+      }
+    });
+  });
+</script>

@@ -4,25 +4,36 @@ import { t } from '../content';
 import type { Locale } from '../i18n/config';
 import { localizedPath } from '../i18n/utils';
 
-interface Props {
-  locale: Locale;
+export interface CtaCopy {
+  eyebrow: string;
+  title: string;
+  button: string;
+  href: string;
 }
 
-const { locale } = Astro.props;
-const copy = t(locale);
+interface Props {
+  locale: Locale;
+  /** Each page's own next step from the site map (About → the project,
+      The Project → request details). Falls back to the generic contact call. */
+  copy?: CtaCopy;
+}
+
+const { locale, copy: override } = Astro.props;
+const fallback = t(locale).cta;
+const cta: CtaCopy = override ?? { ...fallback, href: localizedPath(locale, 'contact') };
 ---
 
 <section class="relative overflow-hidden py-section-sm lg:py-section">
   <div class="container-page relative text-center">
-    <p class="eyebrow text-gold-300" data-reveal>{copy.cta.eyebrow}</p>
+    <p class="eyebrow text-gold-300" data-reveal>{cta.eyebrow}</p>
 
     <h2 class="display-title mx-auto mt-5 max-w-3xl text-white lg:text-6xl" data-split style="opacity:0">
-      {copy.cta.title}
+      {cta.title}
     </h2>
 
     <div class="mt-11" data-reveal data-reveal-delay="0.2">
-      <Button href={localizedPath(locale, 'contact')} variant="solid">
-        {copy.cta.button}
+      <Button href={cta.href} variant="solid">
+        {cta.button}
       </Button>
     </div>
   </div>

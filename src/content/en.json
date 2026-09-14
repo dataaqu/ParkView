@@ -2,7 +2,7 @@
   "nav": {
     "home": "Home",
     "about": "About Us",
-    "infrastructure": "Infrastructure",
+    "project": "The Project",
     "contact": "Contact"
   },
   "common": {
@@ -35,7 +35,8 @@
           "title": "Your best residence",
           "cta": "Read more"
         }
-      ]
+      ],
+      "explore": "Explore the project"
     },
     "about": {
       "index": ".01",
@@ -126,7 +127,7 @@
       ]
     },
     "why": {
-      "eyebrow": "Our approach",
+      "eyebrow": "The vision",
       "title": "Why PARK VIEW",
       "body": "Galaxy Enterprises is a team that transforms square footage into working capital. We don't just build — we design investment assets in the heart of Tbilisi, where every detail is thought through with profitability and long-term value in mind.",
       "features": [
@@ -171,16 +172,79 @@
       "title": "The building in section",
       "body": "The architect's sectional drawing shows the whole of PARK VIEW at once: four independent townhouses, each running the full height of the building, cut open to reveal the private stair and elevator that connect every level — from the common subterranean garage up to the planted rooftop terrace.",
       "caption": "Park View - townhouse, sectional detail. Ortachala, Tbilisi"
+    },
+    "approach": {
+      "eyebrow": "Galaxy Enterprises",
+      "title": "Our approach",
+      "items": [
+        {
+          "icon": "quality",
+          "title": "Quality",
+          "body": "Every detail is thought through with profitability and long-term value in mind."
+        },
+        {
+          "icon": "privacy",
+          "title": "Privacy",
+          "body": "A private, safe and exclusive environment in a gated complex with limited access."
+        },
+        {
+          "icon": "architecture",
+          "title": "Architecture",
+          "body": "Architectural distinction that turns a home into a lasting asset."
+        }
+      ]
+    },
+    "next": {
+      "eyebrow": "PARK VIEW",
+      "title": "See PARK VIEW up close.",
+      "button": "Discover the project"
     }
   },
-  "infrastructure": {
+  "project": {
     "meta": {
-      "title": "Infrastructure - PARK VIEW",
-      "description": "Private elevator, private garage and a gated complex - the key infrastructure of every PARK VIEW residence."
+      "title": "The Project - PARK VIEW",
+      "description": "PARK VIEW by Galaxy Enterprises: four exclusive townhouses in Ortachala, Tbilisi — residences, floor plans, features, gallery and location."
     },
-    "index": ".02",
     "eyebrow": "PARK VIEW",
-    "title": "Key infrastructure"
+    "title": "The Project",
+    "overview": {
+      "eyebrow": "Project overview",
+      "title": "Four exclusive townhouses",
+      "body": "PARK VIEW is four independent townhouses in a gated complex in Ortachala, Tbilisi's Embassy Quarter. Each house runs the full height of the building and has its own private elevator, garage, garden and rooftop terrace.",
+      "facts": [
+        {
+          "value": "4",
+          "label": "townhouses"
+        },
+        {
+          "value": "5",
+          "label": "levels in every house"
+        },
+        {
+          "value": "2",
+          "label": "parking spaces per house"
+        }
+      ]
+    },
+    "residences": {
+      "eyebrow": "Residences & floor plans"
+    },
+    "features": {
+      "eyebrow": "Features & specification"
+    },
+    "gallery": {
+      "eyebrow": "Gallery",
+      "title": "Exterior views",
+      "open": "Open image"
+    },
+    "location": {
+      "mapLink": "Open in Google Maps"
+    },
+    "next": {
+      "eyebrow": "PARK VIEW",
+      "title": "Would you like to see it in person?",
+      "button": "Request details / Book a viewing"
+    }
   },
   "contact": {
     "meta": {
@@ -206,6 +270,25 @@
       "error": "Something went wrong. Please email us at invest@parkview.ge or call +995 555 05 04 54.",
       "required": "This field is required",
       "invalidEmail": "Please enter a valid email address"
+    },
+    "actions": {
+      "title": "Direct contact",
+      "whatsapp": {
+        "title": "WhatsApp",
+        "body": "Open a direct conversation"
+      },
+      "call": {
+        "title": "Call",
+        "body": ""
+      },
+      "email": {
+        "title": "Email",
+        "body": ""
+      },
+      "location": {
+        "title": "View location",
+        "body": "Opens Google Maps"
+      }
     }
   },
   "cta": {

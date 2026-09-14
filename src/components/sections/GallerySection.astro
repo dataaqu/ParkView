@@ -1,0 +1,128 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  /** "Open image" — the thumbnails' accessible label. */
+  openLabel: string;
+  closeLabel: string;
+}
+
+const { eyebrow, title, openLabel, closeLabel }: Props = Astro.props;
+
+/* Every render the site already carries, largest file as the full view and the
+   smallest derivative as the thumbnail. All exterior for now — interior renders
+   are still owed by the client and slot in here as further rows. */
+const IMAGES = [
+  { thumb: '/images/hero1-1280.webp', full: '/images/hero1-1920.webp' },
+  { thumb: '/images/hero2-1280.webp', full: '/images/hero2-1920.webp' },
+  { thumb: '/images/closing-1280.webp', full: '/images/closing-1920.webp' },
+  { thumb: '/images/about-primary-800.webp', full: '/images/about-primary-1400.webp' },
+  { thumb: '/images/facade-1920.webp', full: '/images/facade-1920.webp' },
+  { thumb: '/images/about-home-640.webp', full: '/images/about-home-1000.webp' },
+  { thumb: '/images/infra-elevator-800.webp', full: '/images/infra-elevator-1400.webp' },
+  { thumb: '/images/infra-garage-800.webp', full: '/images/infra-garage-1400.webp' },
+  { thumb: '/images/infra-gate-800.webp', full: '/images/infra-gate-1400.webp' },
+] as const;
+---
+
+<section class="bg-surface-2 py-section-sm lg:py-section" data-gallery>
+  <div class="container-page">
+    <SectionHeading eyebrow={eyebrow} title={title} />
+
+    {/* First image spans two columns and two rows on desktop, so the grid has
+        a lead picture instead of nine equal tiles. */}
+    <ul class="mt-14 grid grid-cols-2 gap-3 lg:mt-20 lg:grid-cols-4 lg:gap-4">
+      {
+        IMAGES.map((image, i) => (
+          <li class:list={[i === 0 && 'col-span-2 lg:row-span-2']} data-reveal data-reveal-delay={Math.min(i, 5) * 0.05}>
+            <button
+              type="button"
+              class="group relative block aspect-4/3 h-full w-full overflow-hidden bg-surface-3"
+              data-gallery-open={image.full}
+              aria-label={`${openLabel} ${i + 1}`}
+            >
+              <img
+                src={image.thumb}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                class="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+              />
+              <span class="absolute inset-0 bg-deep/0 transition-colors duration-500 group-hover:bg-deep/15" aria-hidden="true" />
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <dialog class="gallery-dialog" data-gallery-dialog aria-label={title}>
+    <form method="dialog" class="contents">
+      <button type="submit" class="gallery-close" aria-label={closeLabel}>
+        <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M5 5l14 14M19 5 5 19" />
+        </svg>
+      </button>
+    </form>
+    <img src="" alt="" class="gallery-full" data-gallery-image />
+  </dialog>
+</section>
+
+<style>
+  .gallery-dialog {
+    max-width: min(92vw, 1600px);
+    max-height: 92vh;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .gallery-dialog::backdrop {
+    background: rgb(26 26 46 / 0.92);
+  }
+
+  .gallery-full {
+    display: block;
+    max-width: min(92vw, 1600px);
+    max-height: 88vh;
+    object-fit: contain;
+  }
+
+  .gallery-close {
+    position: absolute;
+    top: -3rem;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: #fff;
+  }
+
+  .gallery-close:hover {
+    color: var(--color-gold-300);
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-gallery]');
+  const dialog = root?.querySelector<HTMLDialogElement>('[data-gallery-dialog]');
+  const full = dialog?.querySelector<HTMLImageElement>('[data-gallery-image]');
+
+  if (root && dialog && full) {
+    root.querySelectorAll<HTMLButtonElement>('[data-gallery-open]').forEach((button) => {
+      button.addEventListener('click', () => {
+        full.src = button.dataset.galleryOpen ?? '';
+        dialog.showModal();
+      });
+    });
+
+    // A click on the backdrop (the dialog box itself, outside the picture) closes it.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+  }
+</script>

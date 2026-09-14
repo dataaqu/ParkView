@@ -2,8 +2,8 @@
 interface Props {
   /**
    * `switch` renders both marks and lets the header state pick one — the
-   * navy logo is invisible over the hero, and the white one is invisible
-   * over the solid header. `dark` is for anything on a light background.
+   * gold-on-light mark is too dark over the hero photo, the light one too pale
+   * over the solid header. `dark` is for light grounds, `light` for dark ones.
    */
   variant?: 'switch' | 'dark' | 'light';
   class?: string;
@@ -11,14 +11,15 @@ interface Props {
 
 const { variant = 'dark', class: className = '' }: Props = Astro.props;
 
-/* Derived from the client's logo.png, which carries ~31% transparent padding
-   and so rendered small inside any fixed-height box. logo-dark/logo-light are
-   the trimmed 114×75 marks; logo.png itself is left as the untouched original.
-   An SVG is still on the wishlist — see §6 of PROGRESS.md — and would drop
-   straight in here. */
-const WIDTH = 114;
-const HEIGHT = 75;
-const alt = 'PARK VIEW';
+/* The site's mark is the developer's — Galaxy Enterprises (client, 14 Sep).
+   Both files are cut from the client's dark-ground PNG by
+   scripts/company-logo.mjs. The old PARK VIEW marks (logo-dark/-light.png)
+   are still in public/images if they are ever wanted back. 767×109. */
+const WIDTH = 767;
+const HEIGHT = 109;
+const alt = 'Galaxy Enterprises LLC';
+const LIGHT = '/images/company/galaxy-light.png';
+const DARK = '/images/company/galaxy-gold.png';
 ---
 
 {
@@ -26,30 +27,23 @@ const alt = 'PARK VIEW';
     <span class:list={['logo relative block', className]}>
       {/* The header wraps this in a link that carries its own aria-label,
           so both marks are decorative here. */}
+      <img src={LIGHT} alt="" aria-hidden="true" width={WIDTH} height={HEIGHT} class="logo-light h-7 w-auto min-[400px]:h-8 sm:h-9 xl:h-11" />
       <img
-        src="/images/logo-light.png"
+        src={DARK}
         alt=""
         aria-hidden="true"
         width={WIDTH}
         height={HEIGHT}
-        class="logo-light h-12 w-auto lg:h-16"
-      />
-      <img
-        src="/images/logo-dark.png"
-        alt=""
-        aria-hidden="true"
-        width={WIDTH}
-        height={HEIGHT}
-        class="logo-dark absolute top-0 left-0 h-12 w-auto opacity-0 lg:h-16"
+        class="logo-dark absolute top-0 left-0 h-7 w-auto opacity-0 min-[400px]:h-8 sm:h-9 xl:h-11"
       />
     </span>
   ) : (
     <img
-      src={variant === 'light' ? '/images/logo-light.png' : '/images/logo-dark.png'}
+      src={variant === 'light' ? LIGHT : DARK}
       alt={alt}
       width={WIDTH}
       height={HEIGHT}
-      class:list={['h-16 w-auto', className]}
+      class:list={['max-w-full', className || 'h-10 w-auto']}
     />
   )
 }
@@ -63,7 +57,7 @@ const alt = 'PARK VIEW';
   }
 
   /* Once the header goes solid — or the mobile menu opens over a white
-     panel — swap to the navy mark. */
+     panel — swap to the gold mark. */
   :global(header.is-solid) .logo-light,
   :global(header.menu-open) .logo-light {
     opacity: 0;
