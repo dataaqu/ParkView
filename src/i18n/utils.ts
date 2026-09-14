@@ -1,6 +1,6 @@
 import { DEFAULT_LOCALE, LOCALES, ROUTES, type Locale, type RouteKey } from './config';
 
-/** Reads the locale out of a pathname. `/en/about` → 'en', `/about` → 'ru'. */
+/** Reads the locale out of a pathname. `/en/about` → 'en', `/about` → 'ka'. */
 export function localeFromPath(pathname: string): Locale {
   const first = pathname.split('/').filter(Boolean)[0];
   return LOCALES.includes(first as Locale) ? (first as Locale) : DEFAULT_LOCALE;

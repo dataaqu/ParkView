@@ -128,15 +128,8 @@ const slides = copy.home.hero.slides.map((slide, i) => {
     font-family: var(--font-display);
   }
 
-  /* English only. Georgian has no case, and Noto Serif Georgian's Mtavruli
-     coverage is not something to bet a hero headline on; Russian reads as
-     shouting in caps at this size. */
-  .hero-title:lang(en) {
-    text-transform: uppercase;
-    /* The base heading rule tightens tracking by -0.01em, which is right for
-       lowercase and wrong for caps. */
-    letter-spacing: 0.015em;
-  }
+  /* No per-language casing: English and Russian must share one format
+     (client, 14 Sep), so the English headline is no longer set in caps. */
 </style>
 
 <script>

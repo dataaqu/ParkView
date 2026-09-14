@@ -33,12 +33,8 @@ const NAV_LINK = (isCurrent: boolean) => [
   isCurrent && 'after:scale-x-100',
 ];
 
-/* The logo sits in the middle of the bar, so the menu is split around it.
-   ROUTES is ordered home → about → project → contact, which halves
-   cleanly; if a fifth route is added the extra one lands on the right. */
-const half = Math.ceil(links.length / 2);
-const leftLinks = links.slice(0, half);
-const rightLinks = links.slice(half);
+/* Client, 14 Sep: every nav link together on the left, the logo alone on the
+   right, so the eye does not have to hunt for the menu. */
 ---
 
 <header
@@ -49,10 +45,10 @@ const rightLinks = links.slice(half);
       screen reader jumping by landmark should reach all four links, not
       the two that happen to sit left of the logo. */}
   <nav
-    class="container-page grid h-20 grid-cols-[1fr_auto_1fr] items-center gap-3 lg:h-24 lg:gap-6 xl:gap-10"
+    class="container-page flex h-20 items-center justify-between gap-4 lg:h-24 lg:gap-8"
     aria-label={copy.common.menu}
   >
-    <div class="flex items-center justify-start">
+    <div class="flex items-center gap-3 lg:gap-10">
       <button
         type="button"
         data-menu-toggle
@@ -68,25 +64,7 @@ const rightLinks = links.slice(half);
 
       <ul class="hidden items-center gap-6 lg:flex xl:gap-10">
         {
-          leftLinks.map(({ key, label, href }) => (
-            <li>
-              <a href={href} aria-current={key === current ? 'page' : undefined} class:list={NAV_LINK(key === current)}>
-                {label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-
-    <a href={localizedPath(locale, 'home')} class="justify-self-center" aria-label={copy.nav.home}>
-      <Logo variant="switch" />
-    </a>
-
-    <div class="flex items-center justify-end gap-6 xl:gap-10">
-      <ul class="hidden items-center gap-6 lg:flex xl:gap-10">
-        {
-          rightLinks.map(({ key, label, href }) => (
+          links.map(({ key, label, href }) => (
             <li>
               <a href={href} aria-current={key === current ? 'page' : undefined} class:list={NAV_LINK(key === current)}>
                 {label}
@@ -98,6 +76,10 @@ const rightLinks = links.slice(half);
 
       <LangSwitcher locale={locale} />
     </div>
+
+    <a href={localizedPath(locale, 'home')} class="shrink-0" aria-label={copy.nav.home}>
+      <Logo variant="switch" />
+    </a>
   </nav>
 </header>
 

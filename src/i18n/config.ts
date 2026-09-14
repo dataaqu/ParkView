@@ -1,9 +1,9 @@
-/* Order here is the order the language switcher renders in. `ru` leads:
-   it is both the default locale and the one the target investors read. */
-export const LOCALES = ['ru', 'en', 'ka'] as const;
+/* Order here is the order the language switcher renders in. `ka` leads:
+   it is the default locale — the site opens in Georgian (client, 14 Sep). */
+export const LOCALES = ['ka', 'en', 'ru'] as const;
 export type Locale = (typeof LOCALES)[number];
 
-export const DEFAULT_LOCALE: Locale = 'ru';
+export const DEFAULT_LOCALE: Locale = 'ka';
 
 /** Shown in the language switcher; `hreflang` goes into <link rel="alternate">. */
 export const LOCALE_META: Record<Locale, { label: string; short: string; hreflang: string; htmlLang: string }> = {
