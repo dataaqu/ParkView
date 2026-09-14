@@ -10,20 +10,13 @@ interface Props {
 const { locale }: Props = Astro.props;
 const copy = t(locale);
 
-/* Client renders. The originals are 3840×2160 and ~0.5–0.7 MB each, which is
-   far too heavy for an LCP image, so `npm run images` writes 1280 / 1920
-   derivatives next to them and the browser picks. Dropping a replacement in
-   as hero1.webp / hero2.webp and rerunning that script is the whole
-   workflow — nothing here needs editing. */
-const renders = ['hero1', 'hero2'];
-const slides = copy.home.hero.slides.map((slide, i) => {
-  const base = renders[i % renders.length];
-  return {
-    ...slide,
-    src: `/images/${base}-1920.webp`,
-    srcset: `/images/${base}-1280.webp 1280w, /images/${base}-1920.webp 1920w, /images/${base}.webp 3840w`,
-  };
-});
+/* 14 Sep: the client's daytime banner is the homepage hero, on every slide
+   (the titles still rotate). It arrived at only 865×487, so there are no
+   1280/1920 derivatives — when the full-size render comes, save it over
+   public/images/hero-main.webp. The night renders hero1/hero2 stay in use on
+   the inner pages and in the gallery. */
+const HERO = { src: '/images/hero-main.webp', width: 865, height: 487 };
+const slides = copy.home.hero.slides.map((slide) => ({ ...slide, src: HERO.src }));
 ---
 
 <section class="relative h-[100svh] min-h-[34rem] w-full overflow-hidden bg-surface-3" data-hero>
@@ -37,11 +30,9 @@ const slides = copy.home.hero.slides.map((slide, i) => {
       >
         <img
           src={slide.src}
-          srcset={slide.srcset}
-          sizes="100vw"
           alt=""
-          width="3840"
-          height="2160"
+          width={HERO.width}
+          height={HERO.height}
           loading={i === 0 ? 'eager' : 'lazy'}
           fetchpriority={i === 0 ? 'high' : undefined}
           decoding="async"
