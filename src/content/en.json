@@ -38,6 +38,10 @@
       ],
       "explore": "Explore the project"
     },
+    "projects": {
+      "eyebrow": "Galaxy Enterprises",
+      "title": "Our projects"
+    },
     "about": {
       "index": ".01",
       "eyebrow": "PARK VIEW",

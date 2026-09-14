@@ -7,8 +7,6 @@ const locale = 'ru' as const;
 const meta = t(locale).home.meta;
 ---
 
-{/* The privileges grid closes the page on the warm ground, so the divider
-    below has to be cut out of that rather than out of white. */}
-<BaseLayout locale={locale} title={meta.title} description={meta.description} closingTone="surface-2">
+<BaseLayout locale={locale} title={meta.title} description={meta.description} cta={false}>
   <HomeBody locale={locale} />
 </BaseLayout>

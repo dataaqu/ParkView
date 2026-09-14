@@ -38,6 +38,10 @@
       ],
       "explore": "პროექტის ნახვა"
     },
+    "projects": {
+      "eyebrow": "Galaxy Enterprises",
+      "title": "ჩვენი პროექტები"
+    },
     "about": {
       "index": ".01",
       "eyebrow": "PARK VIEW",

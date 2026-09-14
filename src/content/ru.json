@@ -38,6 +38,10 @@
       ],
       "explore": "Смотреть проект"
     },
+    "projects": {
+      "eyebrow": "Galaxy Enterprises",
+      "title": "Наши проекты"
+    },
     "about": {
       "index": ".01",
       "eyebrow": "PARK VIEW",
