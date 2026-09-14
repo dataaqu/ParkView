@@ -23,7 +23,7 @@ export const SITE = {
 export const ADDRESS: Record<Locale, string> = {
   ka: 'თბილისი, გულია დიმიტრის ქუჩა 8',
   en: '8 Gulia Dimitri Street, Tbilisi',
-  ru: 'Улица Гулиа Димитрий 8, Тбилиси',
+  ru: 'Тбилиси, ул. Димитрия Гулиа, 8',
 };
 
 /**
